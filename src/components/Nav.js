@@ -4,11 +4,13 @@ import Responsive from "./Responsive";
 import Button from "./Button";
 
 const Wrapper = styled(Responsive)`
+  margin-top: 15px;
   height: 4rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   .logo {
+    color: #343a40;
     font-size: 1.5rem;
     font-weight: 800;
     letter-spacing: 2px;

@@ -10,9 +10,9 @@ const buttonStyle = css`
   color: white;
   outline: none;
   cursor: pointer;
-  background-color: grey;
+  background-color: #343a40;
   &:hover {
-    background-color: lightgrey;
+    background-color: grey;
   }
 `;
 
