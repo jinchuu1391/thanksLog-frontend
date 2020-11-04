@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "../components/Nav";
 
-const PostList = () => {
+const PostListPage = () => {
   return (
     <div>
       <Navbar></Navbar>글 목록 페이지
@@ -9,4 +9,4 @@ const PostList = () => {
   );
 };
 
-export default PostList;
+export default PostListPage;

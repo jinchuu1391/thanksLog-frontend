@@ -1,7 +1,7 @@
 import React from "react";
 
-const Write = () => {
+const WritePage = () => {
   return <div>글쓰기 페이지</div>;
 };
 
-export default Write;
+export default WritePage;
