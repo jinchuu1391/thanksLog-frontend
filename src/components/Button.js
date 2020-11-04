@@ -1,10 +1,11 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+import { Link } from "react-router-dom";
 
-const StyledButton = styled.button`
+const buttonStyle = css`
   border: none;
   border-radius: 5px;
-  font-size: 1rem;
+  font-size: 1.25rem;
   padding: 0.25rem 1rem;
   color: white;
   outline: none;
@@ -15,5 +16,19 @@ const StyledButton = styled.button`
   }
 `;
 
-const Button = (props) => <StyledButton {...props}></StyledButton>;
+const StyledButton = styled.button`
+  ${buttonStyle}
+`;
+
+const StyledLink = styled(Link)`
+  ${buttonStyle}
+`;
+
+const Button = (props) => {
+  return props.to ? (
+    <StyledLink {...props}></StyledLink>
+  ) : (
+    <StyledButton {...props}></StyledButton>
+  );
+};
 export default Button;

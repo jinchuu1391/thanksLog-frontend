@@ -1,26 +1,32 @@
 import React from "react";
 import styled from "styled-components";
-import logo from "../img/thankyou.png";
-const Nav = styled.div`
-  font-size: 2rem;
-  width: 100%;
+import Responsive from "./Responsive";
+import Button from "./Button";
+
+const Wrapper = styled(Responsive)`
+  height: 4rem;
   display: flex;
-  justify-content: space-around;
   align-items: center;
-  margin-top: 30px;
+  justify-content: space-between;
+  .logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+  }
+  .right {
+    display: flex;
+    align-items: center;
+  }
 `;
 
 const Navbar = () => {
   return (
-    <Nav>
-      <div>
-        <a href="#">
-          <img width="100px" src={logo} alt="logo"></img>
-        </a>
-        함께쓰는 감사노트
+    <Wrapper>
+      <div className="logo">함께쓰는 감사노트</div>
+      <div className="right">
+        <Button to="/login">로그인</Button>
       </div>
-      <div>로그인</div>
-    </Nav>
+    </Wrapper>
   );
 };
 
