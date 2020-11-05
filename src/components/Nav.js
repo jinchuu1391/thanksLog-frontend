@@ -24,7 +24,7 @@ const Wrapper = styled(Responsive)`
 const Navbar = () => {
   return (
     <Wrapper>
-      <div className="logo">함께쓰는 감사노트</div>
+      <div className="logo">함께쓰는 감사일기</div>
       <div className="right">
         <Button to="/login">로그인</Button>
       </div>
