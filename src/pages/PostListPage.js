@@ -1,10 +1,12 @@
 import React from "react";
 import Navbar from "../components/Nav";
+import PostList from "../components/PostList";
 
 const PostListPage = () => {
   return (
     <div>
-      <Navbar></Navbar>글 목록 페이지
+      <Navbar></Navbar>
+      <PostList></PostList>
     </div>
   );
 };

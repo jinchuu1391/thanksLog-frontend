@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Responsive from "../components/Responsive";
+import img from "../img/profile.png";
 
 const PostViewWrapper = styled(Responsive)`
   margin-top: 4rem;
@@ -18,13 +19,24 @@ const PostHead = styled.div`
 `;
 
 const SubInfo = styled.div`
+  display: flex;
+  justify-content: left;
+  align-items: center;
   font-size: 1.2rem;
   margin-top: 1rem;
   color: grey;
-  span + span:before {
+  span {
+    padding-left: 1rem;
+  }
+  /* span + span:before {
     padding-left: 0.25rem;
     padding-right: 0.25rem;
     content: "\\B7";
+  } */
+  img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
   }
 `;
 
@@ -39,10 +51,14 @@ const PostView = () => {
       <PostHead>
         <h1>제목</h1>
         <SubInfo>
+          <img src={img} alt="프사"></img>
           <span>
             <b>tester</b>
+            {/* </span> */}
+            {/* <span> */}
+            <br></br>
+            {new Date().toLocaleDateString()}
           </span>
-          <span>{new Date().toLocaleDateString()}</span>
         </SubInfo>
       </PostHead>
       <PostContent
