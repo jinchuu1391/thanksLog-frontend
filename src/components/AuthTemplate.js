@@ -32,7 +32,7 @@ const AuthTemplate = ({ children }) => {
     <AuthWrapper>
       <WhiteBox>
         <div className="logo_container">
-          <Link to="/">함께쓰는 감사노트</Link>
+          <Link to="/">함께쓰는 감사일기</Link>
         </div>
         {children}
       </WhiteBox>

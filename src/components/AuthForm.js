@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useReducer } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import Button from "./Button";
@@ -35,13 +35,31 @@ const modeMap = {
   login: "로그인",
   register: "회원가입",
 };
+
+function reducer(state, action) {
+  return {
+    ...state,
+    [action.name]: action.value,
+  };
+}
+
 const AuthForm = ({ type }) => {
+  const [state, dispatch] = useReducer(reducer, {
+    email: "",
+    username: "",
+    password: "",
+    passwordConfirm: "",
+  });
+
   const mode = modeMap[type];
   return (
     <AuthFormWrapper>
       <h3>{mode}</h3>
       <form>
-        <StyledInput name="username" placeholder="아이디"></StyledInput>
+        <StyledInput name="email" placeholder="이메일"></StyledInput>
+        {type === "register" && (
+          <StyledInput name="username" placeholder="이름"></StyledInput>
+        )}
         <StyledInput
           name="password"
           type="password"
