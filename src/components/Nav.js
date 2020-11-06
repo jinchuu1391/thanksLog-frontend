@@ -26,8 +26,10 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const logoutHandler = () => {
-    dispatch({ type: "LOGOUT", isLoggedIn: false });
+    dispatch({ type: "LOGOUT" });
+    localStorage.removeItem("token");
   };
+
   return (
     <Wrapper>
       <div className="logo">함께쓰는 감사일기</div>

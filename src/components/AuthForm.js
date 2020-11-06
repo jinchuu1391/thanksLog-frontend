@@ -58,11 +58,6 @@ const AuthForm = ({ type, history }) => {
     setForm(nextForm);
   };
 
-  const onClick = (e) => {
-    e.preventDefault();
-    console.log(form);
-  };
-
   const loginHandler = (e) => {
     e.preventDefault();
     if (type === "register") {
@@ -107,7 +102,7 @@ const AuthForm = ({ type, history }) => {
         )
         .then((res) => {
           localStorage.setItem("token", res.data.token);
-          dispatch({ type: "LOGIN", isLoggedIn: true });
+          dispatch({ type: "LOGIN" });
           history.push("/");
         })
         .catch((err) => {

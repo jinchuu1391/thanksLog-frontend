@@ -4,8 +4,9 @@ import Editor from "../components/Editor";
 import Responsive from "../components/Responsive";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { withRouter } from "react-router-dom";
 
-const WritePage = () => {
+const WritePage = ({ history }) => {
   const { title, body } = useSelector((state) => state.post);
 
   const postHandler = () => {
@@ -16,7 +17,7 @@ const WritePage = () => {
         token: localStorage.getItem("token"),
       })
       .then((res) => {
-        // 해당 글 상세 페이지로 이동
+        history.push("/");
       })
       .catch((err) => {
         alert("ERROR! 관리자에게 문의하세요");
@@ -31,4 +32,4 @@ const WritePage = () => {
   );
 };
 
-export default WritePage;
+export default withRouter(WritePage);

@@ -11,6 +11,16 @@ import { composeWithDevTools } from "redux-devtools-extension";
 
 const store = createStore(reducer, composeWithDevTools());
 
+function checkToken() {
+  const token = localStorage.getItem("token");
+  if (token) {
+    store.dispatch({ type: "LOGIN" });
+  } else {
+    store.dispatch({ type: "LOGOUT" });
+  }
+}
+checkToken();
+
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
