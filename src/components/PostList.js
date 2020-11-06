@@ -76,7 +76,7 @@ const PostItem = () => {
 };
 
 const PostList = () => {
-  const isLoggedIn = useSelector((state) => state.isLoggedIn);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   return (
     <PostListWrapper>

@@ -1,8 +1,9 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import Quill from "quill";
 import styled from "styled-components";
 import "quill/dist/quill.bubble.css";
 import Responsive from "../components/Responsive";
+import { useSelector, useDispatch } from "react-redux";
 
 const EditorWrapper = styled(Responsive)`
   padding-top: 5rem;
@@ -33,7 +34,10 @@ const QuillWrapper = styled.div`
 const Editor = () => {
   const quillElement = useRef(null);
   const quillInstance = useRef(null);
-
+  const dispatch = useDispatch();
+  const changeTitleHandler = (e) => {
+    dispatch({ type: "CHANGE_TITLE", title: e.target.value });
+  };
   useEffect(() => {
     quillInstance.current = new Quill(quillElement.current, {
       theme: "bubble",
@@ -48,11 +52,20 @@ const Editor = () => {
         ],
       },
     });
+    const quill = quillInstance.current;
+    quill.on("text-change", (delta, oldDelta, source) => {
+      if (source === "user") {
+        dispatch({ type: "CHANGE_BODY", body: quill.root.innerHTML });
+      }
+    });
   }, []);
 
   return (
     <EditorWrapper>
-      <TitleInput placeholder="제목을 입력하세요"></TitleInput>
+      <TitleInput
+        placeholder="제목을 입력하세요"
+        onChange={changeTitleHandler}
+      ></TitleInput>
       <QuillWrapper>
         <div ref={quillElement}></div>
       </QuillWrapper>

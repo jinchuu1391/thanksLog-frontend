@@ -1,23 +1,10 @@
-const LOGIN = "LOGIN";
-const LOGOUT = "LOGOUT";
+import { combineReducers } from "redux";
+import auth from "./auth";
+import post from "./post";
 
-const initialState = {
-  isLoggedIn: false,
-};
+const rootReducer = combineReducers({
+  auth,
+  post,
+});
 
-function reducer(state = initialState, action) {
-  switch (action.type) {
-    case LOGIN:
-      return {
-        isLoggedIn: true,
-      };
-    case LOGOUT:
-      return {
-        isLoggedIn: false,
-      };
-    default:
-      return state;
-  }
-}
-
-export default reducer;
+export default rootReducer;

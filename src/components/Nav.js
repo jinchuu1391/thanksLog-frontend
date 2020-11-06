@@ -24,7 +24,7 @@ const Wrapper = styled(Responsive)`
 
 const Navbar = () => {
   const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state) => state.isLoggedIn);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const logoutHandler = () => {
     dispatch({ type: "LOGOUT", isLoggedIn: false });
   };

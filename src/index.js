@@ -5,7 +5,7 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import { Provider } from "react-redux";
-import reducer from "../src/store/index";
+import reducer from "./store/index";
 import { createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 
