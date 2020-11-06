@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Responsive from "../components/Responsive";
 import Button from "../components/Button";
 import img from "../img/profile.png";
+import { useSelector } from "react-redux";
 
 const PostListWrapper = styled(Responsive)`
   margin-top: 3rem;
@@ -75,10 +76,12 @@ const PostItem = () => {
 };
 
 const PostList = () => {
+  const isLoggedIn = useSelector((state) => state.isLoggedIn);
+
   return (
     <PostListWrapper>
       <WritePostButtonWrapper>
-        <Button to="write">새 글 작성하기</Button>
+        {isLoggedIn && <Button to="write">새 글 작성하기</Button>}
       </WritePostButtonWrapper>
       <div>
         <PostItem></PostItem>

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import Responsive from "./Responsive";
 import Button from "./Button";
@@ -22,11 +23,22 @@ const Wrapper = styled(Responsive)`
 `;
 
 const Navbar = () => {
+  const dispatch = useDispatch();
+  const isLoggedIn = useSelector((state) => state.isLoggedIn);
+  const logoutHandler = () => {
+    dispatch({ type: "LOGOUT", isLoggedIn: false });
+  };
   return (
     <Wrapper>
       <div className="logo">함께쓰는 감사일기</div>
       <div className="right">
-        <Button to="/login">로그인</Button>
+        {isLoggedIn ? (
+          <Button to="/" onClick={logoutHandler}>
+            로그아웃
+          </Button>
+        ) : (
+          <Button to="/login">로그인</Button>
+        )}
       </div>
     </Wrapper>
   );
