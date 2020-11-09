@@ -7,6 +7,10 @@ import { withRouter } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 const AuthFormWrapper = styled.div`
+  form {
+    display: flex;
+    flex-direction: column;
+  }
   h3 {
     margin: 0;
     margin-bottom: 1rem;
@@ -20,7 +24,7 @@ const StyledInput = styled.input`
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
   outline: none;
-  width: 100%;
+  width: 50%;
 `;
 
 const Footer = styled.div`

@@ -22,7 +22,7 @@ const WhiteBox = styled.div`
     letter-spacing: 2px;
   }
   background-color: white;
-  width: 390px;
+  width: 600px;
   padding: 2rem;
   border-radius: 2px;
 `;
