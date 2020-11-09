@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Responsive from "../components/Responsive";
 import Button from "../components/Button";
 import img from "../img/profile.png";
 import { useSelector } from "react-redux";
+import axios from "axios";
+import timeConverter from "../helper/timeConverter";
 
 const PostListWrapper = styled(Responsive)`
   margin-top: 3rem;
@@ -15,79 +17,93 @@ const WritePostButtonWrapper = styled.div`
 `;
 
 const PostItemWrapper = styled.div`
-  padding-top: 3rem;
-  padding-bottom: 3rem;
+  display: flex;
+  padding-top: 0.5rem;
+  align-items: center;
+  padding-bottom: 0.5rem;
   &:first-child {
     padding-top: 0;
   }
   & + & {
     border-top: 1px solid lightgrey;
   }
+`;
 
-  h2 {
-    font-size: 2rem;
+const SubInfo = styled.div`
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  img {
+    width: 80px;
+    height: 80px;
+    border: 1px solid black;
+    border-radius: 50%;
+  }
+  .username {
+    margin-top: 0.5rem;
+    color: grey;
+  }
+`;
+
+const Left = styled.div`
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: left;
+  .title {
+    font-size: 2.5rem;
     margin-bottom: 0;
     margin-top: 0;
     &:hover {
       cursor: pointer;
     }
   }
-  p {
-    margin-top: 2rem;
-  }
-`;
-const SubInfo = styled.div`
-  display: flex;
-  justify-content: left;
-  align-items: center;
-  color: grey;
-  margin-top: 1rem;
-  span {
-    padding-left: 1rem;
-  }
-  span + span:before {
-    content: "\\B7";
-    padding-left: 0.25rem;
-    padding-right: 0.25rem;
-  }
-  img {
-    width: 70px;
-    height: 70px;
+  .createdAt {
+    color: grey;
   }
 `;
 
-const PostItem = () => {
+const PostItem = ({ post }) => {
+  const { title, User, createdAt } = post;
   return (
     <PostItemWrapper>
-      <h2>제목</h2>
+      <Left>
+        <div className={"title"}>{title}</div>
+        <div className={"createdAt"}>{timeConverter(createdAt)}</div>
+      </Left>
       <SubInfo>
-        <img src={img} alt="프사"></img>
-        <span>
-          <b>username</b>
-          {/* </span> */}
-          {/* <span> */}
-          <br></br>
-          {new Date().toLocaleDateString()}
-        </span>
+        <img src={User.profile_photo_url} alt="프사"></img>
+        <div className={"username"}>{User.username}</div>
       </SubInfo>
-      <p>포스트 내용의 일부분</p>
     </PostItemWrapper>
   );
 };
 
 const PostList = () => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    axios.get("http://localhost:4000/post").then((res) => setPosts(res.data));
+    // axios
+    // .get("http://localhost:4000/post")
+    // .then((res) => console.log(res.data));
+  });
+
+  const postItems = posts.map((post) => {
+    return <PostItem post={post} key={post.id}></PostItem>;
+  });
 
   return (
     <PostListWrapper>
       <WritePostButtonWrapper>
         {isLoggedIn && <Button to="write">새 글 작성하기</Button>}
       </WritePostButtonWrapper>
-      <div>
-        <PostItem></PostItem>
-        <PostItem></PostItem>
-        <PostItem></PostItem>
-      </div>
+      <div>{postItems}</div>
     </PostListWrapper>
   );
 };
