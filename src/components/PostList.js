@@ -6,6 +6,7 @@ import img from "../img/profile.png";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import timeConverter from "../helper/timeConverter";
+import { withRouter } from "react-router-dom";
 
 const PostListWrapper = styled(Responsive)`
   margin-top: 3rem;
@@ -29,7 +30,7 @@ const PostItemWrapper = styled.div`
   }
 `;
 
-const SubInfo = styled.div`
+const PostItem_right = styled.div`
   width: 20%;
   display: flex;
   flex-direction: column;
@@ -41,14 +42,16 @@ const SubInfo = styled.div`
     height: 80px;
     border: 1px solid black;
     border-radius: 50%;
+    cursor: pointer;
   }
   .username {
     margin-top: 0.5rem;
     color: grey;
+    cursor: pointer;
   }
 `;
 
-const Left = styled.div`
+const PostItem_left = styled.div`
   width: 80%;
   display: flex;
   flex-direction: column;
@@ -67,21 +70,38 @@ const Left = styled.div`
   }
 `;
 
-const PostItem = ({ post }) => {
+const PostItem = withRouter(({ post, history }) => {
   const { title, User, createdAt } = post;
+
+  const onTitleClick = () => {
+    history.push(`/post/${post.id}`);
+  };
+
+  const onUserClick = () => {
+    console.log("clicked");
+  };
+
   return (
     <PostItemWrapper>
-      <Left>
-        <div className={"title"}>{title}</div>
+      <PostItem_left>
+        <div className={"title"} onClick={onTitleClick}>
+          {title}
+        </div>
         <div className={"createdAt"}>{timeConverter(createdAt)}</div>
-      </Left>
-      <SubInfo>
-        <img src={User.profile_photo_url} alt="프사"></img>
-        <div className={"username"}>{User.username}</div>
-      </SubInfo>
+      </PostItem_left>
+      <PostItem_right>
+        <img
+          src={User.profile_photo_url}
+          alt="프사"
+          onClick={onUserClick}
+        ></img>
+        <div className={"username"} onClick={onUserClick}>
+          {User.username}
+        </div>
+      </PostItem_right>
     </PostItemWrapper>
   );
-};
+});
 
 const PostList = () => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -89,9 +109,6 @@ const PostList = () => {
 
   useEffect(() => {
     axios.get("http://localhost:4000/post").then((res) => setPosts(res.data));
-    // axios
-    // .get("http://localhost:4000/post")
-    // .then((res) => console.log(res.data));
   });
 
   const postItems = posts.map((post) => {
