@@ -7,7 +7,22 @@ import { withRouter } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 const AuthFormWrapper = styled.div`
+  .formContainer {
+    display: flex;
+  }
+  .form_right {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    img {
+      border: 1px solid black;
+      border-radius: 50%;
+      width: 180px;
+      height: 180px;
+    }
+  }
   form {
+    width: 50%;
     display: flex;
     flex-direction: column;
   }
@@ -24,7 +39,6 @@ const StyledInput = styled.input`
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
   outline: none;
-  width: 50%;
 `;
 
 const Footer = styled.div`
@@ -52,6 +66,9 @@ const AuthForm = ({ type, history }) => {
     password: "",
     passwordConfirm: "",
   });
+  const [img, setImg] = useState(null);
+  const [imgPreview, setImgPreview] = useState(null);
+
   const { email, username, password, passwordConfirm } = form;
 
   const onChange = (e) => {
@@ -61,27 +78,35 @@ const AuthForm = ({ type, history }) => {
     };
     setForm(nextForm);
   };
+  const onImgSelect = (e) => {
+    e.preventDefault();
+    setImg(e.target.files[0]);
+    const reader = new FileReader();
+    const file = e.target.files[0];
+    reader.onloadend = (e) => {
+      setImgPreview(e.target.result);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const loginHandler = (e) => {
     e.preventDefault();
     if (type === "register") {
+      const Data = new FormData();
+      Data.append("email", email);
+      Data.append("username", username);
+      Data.append("password", password);
+      Data.append("img", img);
       axios
-        .post(
-          "http://localhost:4000/auth/signup",
-          {
-            email: email,
-            username: username,
-            password: password,
+        .post("http://localhost:4000/auth/signup", Data, {
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8",
+            "Access-Control-Allow-Origin": "*",
           },
-          {
-            headers: {
-              "Content-Type": "application/json;charset=UTF-8",
-              "Access-Control-Allow-Origin": "*",
-            },
-          }
-        )
+        })
         .then((res) => {
           localStorage.setItem("token", res.data.token);
+          dispatch({ type: "LOGIN" });
           history.push("/");
         })
         .catch((err) => {
@@ -123,35 +148,43 @@ const AuthForm = ({ type, history }) => {
   return (
     <AuthFormWrapper>
       <h3>{mode}</h3>
-      <form>
-        <StyledInput
-          name="email"
-          placeholder="이메일"
-          onChange={onChange}
-        ></StyledInput>
-        {type === "register" && (
+      <div className="formContainer">
+        <form encType="multipart/form-data">
           <StyledInput
-            name="username"
-            placeholder="이름"
+            name="email"
+            placeholder="이메일"
             onChange={onChange}
           ></StyledInput>
-        )}
-        <StyledInput
-          name="password"
-          type="password"
-          placeholder="비밀번호"
-          onChange={onChange}
-        ></StyledInput>
-        {type === "register" && (
+          {type === "register" && (
+            <StyledInput
+              name="username"
+              placeholder="이름"
+              onChange={onChange}
+            ></StyledInput>
+          )}
           <StyledInput
-            name="passwordConfirm"
-            placeholder="비밀번호 확인"
+            name="password"
             type="password"
+            placeholder="비밀번호"
             onChange={onChange}
           ></StyledInput>
-        )}
-        <Button onClick={loginHandler}>{mode}</Button>
-      </form>
+          {type === "register" && (
+            <>
+              <StyledInput
+                name="passwordConfirm"
+                placeholder="비밀번호 확인"
+                type="password"
+                onChange={onChange}
+              ></StyledInput>
+              <input type="file" onChange={onImgSelect}></input>
+            </>
+          )}
+          <Button onClick={loginHandler}>{mode}</Button>
+        </form>
+        <div className="form_right">
+          {type === "register" && <img id="preview" src="" alt="프사"></img>}
+        </div>
+      </div>
       <Footer>
         {type === "login" ? (
           <Link to="signup">회원가입</Link>

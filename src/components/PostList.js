@@ -109,7 +109,7 @@ const PostList = () => {
 
   useEffect(() => {
     axios.get("http://localhost:4000/post").then((res) => setPosts(res.data));
-  });
+  }, []);
 
   const postItems = posts.map((post) => {
     return <PostItem post={post} key={post.id}></PostItem>;
