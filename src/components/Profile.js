@@ -69,31 +69,30 @@ const PostItem = ({ post }) => {
 };
 
 const Profile = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [posts, setPosts] = useState([]);
-
+  const [profileData, setProfileData] = useState("");
+  const { username, email, profile_photo_url, Contents } = profileData;
   useEffect(() => {
     axios
       .post("http://localhost:4000/auth/mypage", {
         token: localStorage.getItem("token"),
       })
       .then((res) => {
-        setUsername(res.data[0].username);
-        setEmail(res.data[0].email);
-        setPosts(res.data[0].Contents);
+        setProfileData(res.data[0]);
       })
       .catch((err) => console.log(err));
-  });
+  }, []);
 
-  const postItems = posts.map((post) => {
-    return <PostItem post={post} key={post.id}></PostItem>;
-  });
+  const postItems = Contents
+    ? Contents.map((post) => {
+        return <PostItem post={post} key={post.id}></PostItem>;
+      })
+    : [];
+
   return (
     <ProfileWrapper>
       <UserInfo>
         <div className="imageSection">
-          <img src={img} alt="프사"></img>
+          <img src={profile_photo_url} alt="프사"></img>
           <div className="button">사진 올리기</div>
           <div className="button">사진 삭제</div>
         </div>
