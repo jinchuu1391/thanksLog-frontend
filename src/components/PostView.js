@@ -5,7 +5,8 @@ import axios from "axios";
 import { withRouter } from "react-router-dom";
 import timeConverter from "../helper/timeConverter";
 import { useSelector } from "react-redux";
-
+import Button from "../components/Button";
+import image from "../img/profile.png";
 const PostViewWrapper = styled(Responsive)`
   margin-top: 4rem;
 `;
@@ -53,6 +54,10 @@ const PostContent = styled.div`
   min-height: 300px;
 `;
 
+const InputWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
 const CommentInput = styled.input`
   width: 100%;
   height: 2rem;
@@ -63,6 +68,58 @@ const CommentInput = styled.input`
   outline: none;
   padding: 1rem;
 `;
+
+const SmallButton = styled(Button)`
+  width: 80px;
+`;
+
+const CommentItemWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding-top: 1rem;
+  align-items: flex-start;
+  color: #343a40;
+  & + & {
+    border-top: 1px solid lightgrey;
+  }
+  .comment {
+    font-size: 1.3rem;
+    padding-bottom: 0.5rem;
+  }
+`;
+
+const CommentItemUpper = styled.div`
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  padding-bottom: 1rem;
+  img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+  }
+`;
+
+const UserInfo = styled.div`
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+`;
+
+const CommentItem = withRouter(({ comment, history }) => {
+  return (
+    <CommentItemWrapper>
+      <CommentItemUpper>
+        <img src={image} alt="" />
+        <UserInfo>
+          <div>유저이름</div>
+          <div>2020년 00월 00일 00시 00분</div>
+        </UserInfo>
+      </CommentItemUpper>
+      <div className="comment">테스트 코멘트 입니다</div>
+    </CommentItemWrapper>
+  );
+});
 
 const PostView = ({ id, match, history }) => {
   const [title, setTitle] = useState("");
@@ -82,6 +139,7 @@ const PostView = ({ id, match, history }) => {
       })
       .then((res) => {
         if (res.data.content[0]) {
+          console.log(res.data.content[0]);
           setTitle(res.data.content[0].title);
           setUsername(res.data.content[0].User.username);
           setCreatedAt(timeConverter(res.data.content[0].createdAt));
@@ -115,7 +173,13 @@ const PostView = ({ id, match, history }) => {
             </SubInfo>
           </PostHead>
           <PostContent dangerouslySetInnerHTML={{ __html: body }}></PostContent>
-          <CommentInput placeholder={"댓글을 써보세요!"}></CommentInput>
+          <InputWrapper>
+            <CommentInput placeholder={"댓글을 써보세요!"}></CommentInput>
+            <SmallButton>등록</SmallButton>
+          </InputWrapper>
+          <CommentItem></CommentItem>
+          <CommentItem></CommentItem>
+          <CommentItem></CommentItem>
         </PostViewWrapper>
       ) : (
         <PostViewWrapper>
