@@ -19,6 +19,7 @@ const WritePostButtonWrapper = styled.div`
 
 const PostItemWrapper = styled.div`
   display: flex;
+  justify-content: space-between;
   padding-top: 0.5rem;
   align-items: center;
   padding-bottom: 0.5rem;
@@ -30,7 +31,7 @@ const PostItemWrapper = styled.div`
   }
 `;
 
-const PostItem_right = styled.div`
+const PostItemRight = styled.div`
   width: 20%;
   display: flex;
   flex-direction: column;
@@ -40,7 +41,6 @@ const PostItem_right = styled.div`
   img {
     width: 80px;
     height: 80px;
-    border: 1px solid black;
     border-radius: 50%;
     cursor: pointer;
   }
@@ -51,14 +51,14 @@ const PostItem_right = styled.div`
   }
 `;
 
-const PostItem_left = styled.div`
-  width: 80%;
+const PostItemLeft = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: left;
   .title {
     font-size: 2.5rem;
+
     margin-bottom: 0;
     margin-top: 0;
     &:hover {
@@ -74,22 +74,23 @@ const PostItem = withRouter(({ post, history }) => {
   const { title, User, createdAt } = post;
 
   const onTitleClick = () => {
-    history.push(`/post/${post.id}`);
+    history.push(`/${post.id}`);
   };
 
   const onUserClick = () => {
-    console.log("clicked");
+    history.push(`/@${post.User.email}`);
+    // console.log(post.User.email);
   };
 
   return (
     <PostItemWrapper>
-      <PostItem_left>
+      <PostItemLeft>
         <div className={"title"} onClick={onTitleClick}>
           {title}
         </div>
         <div className={"createdAt"}>{timeConverter(createdAt)}</div>
-      </PostItem_left>
-      <PostItem_right>
+      </PostItemLeft>
+      <PostItemRight>
         <img
           src={User.profile_photo_url}
           alt="프사"
@@ -98,7 +99,7 @@ const PostItem = withRouter(({ post, history }) => {
         <div className={"username"} onClick={onUserClick}>
           {User.username}
         </div>
-      </PostItem_right>
+      </PostItemRight>
     </PostItemWrapper>
   );
 });
@@ -118,7 +119,7 @@ const PostList = () => {
   return (
     <PostListWrapper>
       <WritePostButtonWrapper>
-        {isLoggedIn && <Button to="write">새 글 작성하기</Button>}
+        {isLoggedIn && <Button to="/write">새 글 작성하기</Button>}
       </WritePostButtonWrapper>
       <div>{postItems}</div>
     </PostListWrapper>

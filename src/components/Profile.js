@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import Button from "./Button";
 import axios from "axios";
 import { withRouter } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AuthTemplate from "./AuthTemplate";
 import img from "../img/profile.png";
 import timeConverter from "../helper/timeConverter";
@@ -19,28 +19,28 @@ const UserInfo = styled.div`
   height: 50%;
   display: flex;
   justify-content: space-around;
-  align-items: center;
+  /* align-items: center; */
   .button {
     color: green;
     cursor: pointer;
   }
   .imageSection {
     img {
-      width: 100px;
-      height: 100px;
+      width: 200px;
+      height: 200px;
+      border-radius: 5px;
     }
   }
   .userInfoSection {
     display: flex;
     flex-direction: column;
-    justify-content: center;
   }
   .rightSection {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
   }
 `;
+
 const PostInfo = styled.div`
   height: 50%;
 `;
@@ -57,23 +57,37 @@ const PostItemWrapper = styled.div`
   & + & {
     border-top: 1px solid lightgrey;
   }
+  .title {
+    cursor: pointer;
+  }
 `;
 
-const PostItem = ({ post }) => {
+const PostItem = withRouter(({ post, history }) => {
+  const goToPostPage = () => {
+    history.push(`/${post.id}`);
+  };
   return (
     <PostItemWrapper>
-      <div className="title">{post.title}</div>
+      <div className="title" onClick={goToPostPage}>
+        {post.title}
+      </div>
       <div className="createdAt">{timeConverter(post.createdAt)}</div>
     </PostItemWrapper>
   );
-};
+});
 
-const Profile = () => {
+const NeedLogin = styled.div`
+  text-align: center;
+  font-size: 3rem;
+`;
+
+const Profile = withRouter(({ match }) => {
   const [profileData, setProfileData] = useState("");
   const { username, email, profile_photo_url, Contents } = profileData;
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   useEffect(() => {
     axios
-      .post("http://localhost:4000/auth/mypage", {
+      .post(`http://localhost:4000/auth/mypage/${match.params.email}`, {
         token: localStorage.getItem("token"),
       })
       .then((res) => {
@@ -89,26 +103,34 @@ const Profile = () => {
     : [];
 
   return (
-    <ProfileWrapper>
-      <UserInfo>
-        <div className="imageSection">
-          <img src={profile_photo_url} alt="프사"></img>
-          <div className="button">사진 올리기</div>
-          <div className="button">사진 삭제</div>
-        </div>
-        <div className="userInfoSection">
-          <div>{username}</div>
-          <div>{email}</div>
-          <div>주니어 개발자 입니다</div>
-        </div>
-        <div className="rightSection">
-          <div className="button">수정하기</div>
-          <div className="button">탈퇴하기</div>
-        </div>
-      </UserInfo>
-      <PostInfo>{postItems}</PostInfo>
-    </ProfileWrapper>
+    <>
+      {isLoggedIn ? (
+        <ProfileWrapper>
+          <UserInfo>
+            <div className="imageSection">
+              <img src={profile_photo_url} alt="프사"></img>
+              <div className="button">사진 올리기</div>
+              <div className="button">사진 삭제</div>
+            </div>
+            <div className="userInfoSection">
+              <div>{username}</div>
+              <div>{email}</div>
+              <div>주니어 개발자 입니다</div>
+            </div>
+            <div className="rightSection">
+              <div className="button">수정하기</div>
+              <div className="button">탈퇴하기</div>
+            </div>
+          </UserInfo>
+          <PostInfo>{postItems}</PostInfo>
+        </ProfileWrapper>
+      ) : (
+        <ProfileWrapper>
+          <NeedLogin>로그인 해주세요:D</NeedLogin>
+        </ProfileWrapper>
+      )}
+    </>
   );
-};
+});
 
 export default Profile;

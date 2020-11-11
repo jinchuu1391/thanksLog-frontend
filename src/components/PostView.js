@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Responsive from "../components/Responsive";
-import img from "../img/profile.png";
 import axios from "axios";
 import { withRouter } from "react-router-dom";
 import timeConverter from "../helper/timeConverter";
@@ -22,6 +21,11 @@ const PostHead = styled.div`
   }
 `;
 
+const NeedLogin = styled.div`
+  text-align: center;
+  font-size: 3rem;
+`;
+
 const SubInfo = styled.div`
   display: flex;
   justify-content: left;
@@ -32,21 +36,32 @@ const SubInfo = styled.div`
   span {
     padding-left: 1rem;
   }
-  /* span + span:before {
-    padding-left: 0.25rem;
-    padding-right: 0.25rem;
-    content: "\\B7";
-  } */
   img {
     width: 70px;
     height: 70px;
     border-radius: 50%;
+    cursor: pointer;
+  }
+  b {
+    cursor: pointer;
   }
 `;
 
 const PostContent = styled.div`
   font-size: 1.3rem;
   color: #343a40;
+  min-height: 300px;
+`;
+
+const CommentInput = styled.input`
+  width: 100%;
+  height: 2rem;
+  font-size: 1.3rem;
+  color: #343a40;
+  border: 1px solid grey;
+  border-radius: 5px;
+  outline: none;
+  padding: 1rem;
 `;
 
 const PostView = ({ id, match, history }) => {
@@ -54,31 +69,35 @@ const PostView = ({ id, match, history }) => {
   const [username, setUsername] = useState("");
   const [createdAt, setCreatedAt] = useState("");
   const [body, setBody] = useState("");
+  const [profilePhoto, setProfilePhoto] = useState("");
+  const [email, setEmail] = useState("");
 
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   const idFromParams = match.params.postId;
-
   useEffect(() => {
-    if (!isLoggedIn) {
-      alert("로그인이 필요합니다");
-      history.push("/");
-    }
     axios
       .post(`http://localhost:4000/post/${id ? id : idFromParams}`, {
         token: localStorage.getItem("token"),
       })
       .then((res) => {
-        console.log(res.data.content[0]);
-        setTitle(res.data.content[0].title);
-        setUsername(res.data.content[0].User.username);
-        setCreatedAt(timeConverter(res.data.content[0].createdAt));
-        setBody(res.data.content[0].content);
+        if (res.data.content[0]) {
+          setTitle(res.data.content[0].title);
+          setUsername(res.data.content[0].User.username);
+          setCreatedAt(timeConverter(res.data.content[0].createdAt));
+          setBody(res.data.content[0].content);
+          setProfilePhoto(res.data.content[0].User.profile_photo_url);
+          setEmail(res.data.content[0].User.email);
+        }
       })
       .catch((err) => {
         console.log(err);
       });
-  });
+  }, [idFromParams]);
+
+  const goToProfile = () => {
+    history.push(`/@${email}`);
+  };
 
   return (
     <>
@@ -87,21 +106,20 @@ const PostView = ({ id, match, history }) => {
           <PostHead>
             <h1>{title}</h1>
             <SubInfo>
-              <img src={img} alt="프사"></img>
+              <img src={profilePhoto} alt="프사" onClick={goToProfile}></img>
               <span>
-                <b>{username}</b>
+                <b onClick={goToProfile}>{username}</b>
                 <br></br>
                 {createdAt}
               </span>
             </SubInfo>
           </PostHead>
           <PostContent dangerouslySetInnerHTML={{ __html: body }}></PostContent>
+          <CommentInput placeholder={"댓글을 써보세요!"}></CommentInput>
         </PostViewWrapper>
       ) : (
         <PostViewWrapper>
-          <PostHead>
-            <h1>가입해주세요:D</h1>
-          </PostHead>
+          <NeedLogin>로그인 해주세요:D</NeedLogin>
         </PostViewWrapper>
       )}
     </>
