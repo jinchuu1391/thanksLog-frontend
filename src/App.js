@@ -13,10 +13,10 @@ function App() {
       <Switch>
         <Route component={PostListPage} path="/" exact></Route>
         <Route component={LoginPage} path="/login"></Route>
+        <Route component={SignUpPage} path="/signup"></Route>
         <Route component={WritePage} path="/write"></Route>
         <Route component={ProfilePage} path="/@:email"></Route>
         <Route component={PostViewPage} path="/:postId" exact></Route>
-        <Route component={SignUpPage} path="/signup"></Route>
       </Switch>
     </div>
   );

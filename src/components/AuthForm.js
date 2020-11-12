@@ -13,25 +13,57 @@ const AuthFormWrapper = styled.div`
   .form_right {
     width: 50%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
     img {
-      border: 1px solid black;
+      /* border: 1px solid black; */
       border-radius: 50%;
       width: 180px;
       height: 180px;
+      margin-bottom: 1rem;
     }
   }
   form {
-    width: 50%;
     display: flex;
-    flex-direction: column;
+    .formLeft {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+    }
   }
   h3 {
     margin: 0;
     margin-bottom: 1rem;
   }
-`;
+  .filebox label {
+    margin-bottom: 0.5rem;
+    display: inline-block;
+    padding: 0.5rem;
+    color: #fff;
+    background-color: #343a40;
+    cursor: pointer;
+    border-radius: 5px;
+  }
 
+  .filebox label:hover {
+    background-color: grey;
+  }
+
+  .filebox input[type="file"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+`;
+const LongButton = styled(Button)`
+  width: 50%;
+`;
 const StyledInput = styled.input`
   font-size: 1rem;
   border: none;
@@ -65,11 +97,12 @@ const AuthForm = ({ type, history }) => {
     username: "",
     password: "",
     passwordConfirm: "",
+    introduce: "",
   });
   const [img, setImg] = useState(null);
   const [imgPreview, setImgPreview] = useState(null);
 
-  const { email, username, password, passwordConfirm } = form;
+  const { email, username, introduce, password, passwordConfirm } = form;
 
   const onChange = (e) => {
     const nextForm = {
@@ -86,16 +119,24 @@ const AuthForm = ({ type, history }) => {
     reader.onloadend = (e) => {
       setImgPreview(e.target.result);
     };
-    reader.readAsDataURL(file);
+    if (file) {
+      reader.readAsDataURL(file);
+    } else {
+      setImgPreview(null);
+    }
   };
 
   const loginHandler = (e) => {
     e.preventDefault();
     if (type === "register") {
+      if (password !== passwordConfirm) {
+        return alert("비밀번호를 다시 확인해주세요");
+      }
       const Data = new FormData();
       Data.append("email", email);
       Data.append("username", username);
       Data.append("password", password);
+      Data.append("introduce", introduce);
       Data.append("img", img);
       axios
         .post("http://localhost:4000/auth/signup", Data, {
@@ -110,7 +151,8 @@ const AuthForm = ({ type, history }) => {
           history.push("/");
         })
         .catch((err) => {
-          if (err.response.data.code === "409") {
+          console.log(err.response.status);
+          if (err.response.status === "409") {
             alert("이미 사용중인 메일 입니다");
           }
         });
@@ -148,8 +190,8 @@ const AuthForm = ({ type, history }) => {
   return (
     <AuthFormWrapper>
       <h3>{mode}</h3>
-      <div className="formContainer">
-        <form encType="multipart/form-data">
+      <form encType="multipart/form-data">
+        <div className="formLeft">
           <StyledInput
             name="email"
             placeholder="이메일"
@@ -176,15 +218,35 @@ const AuthForm = ({ type, history }) => {
                 type="password"
                 onChange={onChange}
               ></StyledInput>
-              <input type="file" onChange={onImgSelect}></input>
+              <StyledInput
+                name="introduce"
+                onChange={onChange}
+                placeholder="자신을 소개해주세요(선택)"
+              ></StyledInput>
             </>
           )}
-          <Button onClick={loginHandler}>{mode}</Button>
-        </form>
-        <div className="form_right">
-          {type === "register" && <img id="preview" src="" alt="프사"></img>}
         </div>
-      </div>
+        {type === "register" && (
+          <div className="form_right">
+            <img
+              src={
+                imgPreview
+                  ? imgPreview
+                  : "https://user-images.githubusercontent.com/62422486/98907760-b282a200-2502-11eb-9e27-acb392842a92.png"
+              }
+              alt="profilePhoto"
+            ></img>
+            <div className="filebox">
+              <label for="ex_file" onChange={onImgSelect}>
+                이미지 업로드
+              </label>
+              <input type="file" id="ex_file" onChange={onImgSelect}></input>
+            </div>
+          </div>
+        )}
+      </form>
+      <LongButton onClick={loginHandler}>{mode}</LongButton>
+
       <Footer>
         {type === "login" ? (
           <Link to="signup">회원가입</Link>
