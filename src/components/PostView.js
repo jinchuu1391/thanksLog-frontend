@@ -86,6 +86,9 @@ const CommentItemWrapper = styled.div`
     font-size: 1.3rem;
     padding-bottom: 0.5rem;
   }
+  .commentWriter {
+    cursor: pointer;
+  }
 `;
 
 const CommentItemUpper = styled.div`
@@ -107,12 +110,22 @@ const UserInfo = styled.div`
 `;
 
 const CommentItem = withRouter(({ comment, history }) => {
+  const goToProfile = () => {
+    history.push(`/@${comment.User.email}`);
+  };
   return (
     <CommentItemWrapper>
       <CommentItemUpper>
-        <img src={comment.User.profile_photo_url} alt="" />
+        <img
+          src={comment.User.profile_photo_url}
+          alt=""
+          onClick={goToProfile}
+          className="commentWriter"
+        />
         <UserInfo>
-          <div>{comment.User.username}</div>
+          <div onClick={goToProfile} className="commentWriter">
+            {comment.User.username}
+          </div>
           <div>{timeConverter(comment.createdAt)}</div>
         </UserInfo>
       </CommentItemUpper>
