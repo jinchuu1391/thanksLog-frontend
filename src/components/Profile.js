@@ -83,7 +83,13 @@ const NeedLogin = styled.div`
 
 const Profile = withRouter(({ match }) => {
   const [profileData, setProfileData] = useState("");
-  const { username, email, profile_photo_url, Contents } = profileData;
+  const {
+    username,
+    email,
+    profile_photo_url,
+    introduce,
+    Contents,
+  } = profileData;
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   useEffect(() => {
     axios
@@ -115,7 +121,7 @@ const Profile = withRouter(({ match }) => {
             <div className="userInfoSection">
               <div>{username}</div>
               <div>{email}</div>
-              <div>주니어 개발자 입니다</div>
+              <div>{introduce}</div>
             </div>
             <div className="rightSection">
               <div className="button">수정하기</div>
