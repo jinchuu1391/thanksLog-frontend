@@ -9,7 +9,7 @@ import timeConverter from "../helper/timeConverter";
 import { withRouter } from "react-router-dom";
 
 const PostListWrapper = styled(Responsive)`
-  margin-top: 3rem;
+  margin-top: 1rem;
 `;
 const WritePostButtonWrapper = styled.div`
   display: flex;
@@ -55,17 +55,13 @@ const PostItemLeft = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: left;
   .title {
-    font-size: 2.5rem;
-
-    margin-bottom: 0;
-    margin-top: 0;
+    font-size: 3rem;
     &:hover {
       cursor: pointer;
     }
   }
-  .createdAt {
+  .subInfo {
     color: grey;
   }
 `;
@@ -79,7 +75,6 @@ const PostItem = withRouter(({ post, history }) => {
 
   const onUserClick = () => {
     history.push(`/@${post.User.email}`);
-    // console.log(post.User.email);
   };
 
   return (
@@ -88,7 +83,8 @@ const PostItem = withRouter(({ post, history }) => {
         <div className={"title"} onClick={onTitleClick}>
           {title}
         </div>
-        <div className={"createdAt"}>{timeConverter(createdAt)}</div>
+        <div className={"subInfo"}>{timeConverter(createdAt)}</div>
+        <div className={"subInfo"}>{post.Comments.length}개의 댓글</div>
       </PostItemLeft>
       <PostItemRight>
         <img
@@ -109,7 +105,12 @@ const PostList = () => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:4000/post").then((res) => setPosts(res.data));
+    axios
+      .get("http://localhost:4000/post")
+      .then((res) => {
+        setPosts(res.data);
+      })
+      .catch((err) => console.error(err));
   }, []);
 
   const postItems = posts.map((post) => {
