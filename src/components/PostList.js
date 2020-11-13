@@ -121,7 +121,7 @@ const PostList = () => {
       <WritePostButtonWrapper>
         {isLoggedIn && <Button to="/write">새 글 작성하기</Button>}
       </WritePostButtonWrapper>
-      <div>{postItems}</div>
+      <div>{postItems.reverse()}</div>
     </PostListWrapper>
   );
 };
