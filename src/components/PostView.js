@@ -110,28 +110,33 @@ const CommentItem = withRouter(({ comment, history }) => {
   return (
     <CommentItemWrapper>
       <CommentItemUpper>
-        <img src={image} alt="" />
+        <img src={comment.User.profile_photo_url} alt="" />
         <UserInfo>
-          <div>유저이름</div>
-          <div>2020년 00월 00일 00시 00분</div>
+          <div>{comment.User.username}</div>
+          <div>{timeConverter(comment.createdAt)}</div>
         </UserInfo>
       </CommentItemUpper>
-      <div className="comment">테스트 코멘트 입니다</div>
+      <div className="comment">{comment.comment}</div>
     </CommentItemWrapper>
   );
 });
 
 const PostView = ({ id, match, history }) => {
-  const [title, setTitle] = useState("");
-  const [username, setUsername] = useState("");
-  const [createdAt, setCreatedAt] = useState("");
-  const [body, setBody] = useState("");
-  const [profilePhoto, setProfilePhoto] = useState("");
-  const [email, setEmail] = useState("");
+  const [postData, setPostData] = useState({
+    title: "",
+    createdAt: "",
+    content: "",
+    Comments: [],
+    User: {},
+  });
+  const { title, createdAt, content, Comments, User } = postData;
+  const { username, profile_photo_url, email } = User ? User : "";
+  const [comment, setComment] = useState("");
+  const [rerender, setRerender] = useState(false);
 
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-
   const idFromParams = match.params.postId;
+
   useEffect(() => {
     axios
       .post(`http://localhost:4000/post/${id ? id : idFromParams}`, {
@@ -139,23 +144,41 @@ const PostView = ({ id, match, history }) => {
       })
       .then((res) => {
         if (res.data.content[0]) {
-          console.log(res.data.content[0]);
-          setTitle(res.data.content[0].title);
-          setUsername(res.data.content[0].User.username);
-          setCreatedAt(timeConverter(res.data.content[0].createdAt));
-          setBody(res.data.content[0].content);
-          setProfilePhoto(res.data.content[0].User.profile_photo_url);
-          setEmail(res.data.content[0].User.email);
+          setPostData(res.data.content[0]);
         }
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [idFromParams]);
+  }, [idFromParams, rerender]);
 
   const goToProfile = () => {
     history.push(`/@${email}`);
   };
+
+  const onCommentChange = (e) => {
+    setComment(e.target.value);
+  };
+
+  const commentHadler = () => {
+    axios
+      .post("http://localhost:4000/comment", {
+        comment: comment,
+        contentId: id ? id : idFromParams,
+        token: localStorage.getItem("token"),
+      })
+      .then((res) => {
+        setComment("");
+        setRerender(!rerender);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const commentItems = Comments.map((commentItem) => {
+    return (
+      <CommentItem comment={commentItem} key={commentItem.id}></CommentItem>
+    );
+  });
 
   return (
     <>
@@ -164,22 +187,30 @@ const PostView = ({ id, match, history }) => {
           <PostHead>
             <h1>{title}</h1>
             <SubInfo>
-              <img src={profilePhoto} alt="프사" onClick={goToProfile}></img>
+              <img
+                src={profile_photo_url}
+                alt="프사"
+                onClick={goToProfile}
+              ></img>
               <span>
                 <b onClick={goToProfile}>{username}</b>
                 <br></br>
-                {createdAt}
+                {timeConverter(createdAt)}
               </span>
             </SubInfo>
           </PostHead>
-          <PostContent dangerouslySetInnerHTML={{ __html: body }}></PostContent>
+          <PostContent
+            dangerouslySetInnerHTML={{ __html: content }}
+          ></PostContent>
           <InputWrapper>
-            <CommentInput placeholder={"댓글을 써보세요!"}></CommentInput>
-            <SmallButton>등록</SmallButton>
+            <CommentInput
+              placeholder={"댓글을 써보세요!"}
+              onChange={onCommentChange}
+              value={comment}
+            ></CommentInput>
+            <SmallButton onClick={commentHadler}>등록</SmallButton>
           </InputWrapper>
-          <CommentItem></CommentItem>
-          <CommentItem></CommentItem>
-          <CommentItem></CommentItem>
+          {commentItems.reverse()}
         </PostViewWrapper>
       ) : (
         <PostViewWrapper>
