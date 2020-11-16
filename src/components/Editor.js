@@ -34,6 +34,8 @@ const QuillWrapper = styled.div`
 const Editor = () => {
   const quillElement = useRef(null);
   const quillInstance = useRef(null);
+  const post = useSelector((state) => state.post);
+
   const dispatch = useDispatch();
   const changeTitleHandler = (e) => {
     dispatch({ type: "CHANGE_TITLE", title: e.target.value });
@@ -58,6 +60,13 @@ const Editor = () => {
         dispatch({ type: "CHANGE_BODY", body: quill.root.innerHTML });
       }
     });
+    return () => {
+      dispatch({ type: "INITIALIZE" });
+    };
+  }, []);
+
+  useEffect(() => {
+    quillInstance.current.root.innerHTML = post.body;
   }, []);
 
   return (
@@ -65,6 +74,7 @@ const Editor = () => {
       <TitleInput
         placeholder="제목을 입력하세요"
         onChange={changeTitleHandler}
+        value={post.title}
       ></TitleInput>
       <QuillWrapper>
         <div ref={quillElement}></div>

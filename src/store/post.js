@@ -1,9 +1,13 @@
 const CHANGE_TITLE = "CHANGE_TITLE";
 const CHANGE_BODY = "CHANGE_BODY";
+const INITIALIZE = "INITIALIZE";
+const EDIT_MODE = "EDIT_MODE";
 
 const initialState = {
+  id: "",
   title: "",
   body: "",
+  editMode: false,
 };
 
 function post(state = initialState, action) {
@@ -17,6 +21,19 @@ function post(state = initialState, action) {
       return {
         ...state,
         body: action.body,
+      };
+    case INITIALIZE:
+      return {
+        title: "",
+        body: "",
+        id: "",
+        editMode: false,
+      };
+    case EDIT_MODE:
+      return {
+        ...state,
+        id: action.id,
+        editMode: true,
       };
     default:
       return state;

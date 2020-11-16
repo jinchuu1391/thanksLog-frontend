@@ -135,6 +135,7 @@ const CommentItem = withRouter(({ comment, history, currentUser }) => {
       })
       .catch((err) => console.error(err));
   };
+
   return (
     <CommentItemWrapper>
       <CommentItemUpper>
@@ -230,6 +231,13 @@ const PostView = ({ match, history }) => {
     }
   };
 
+  const postEditHandler = () => {
+    dispatch({ type: "CHANGE_TITLE", title: title });
+    dispatch({ type: "CHANGE_BODY", body: content });
+    dispatch({ type: "EDIT_MODE", id: idFromParams });
+    history.push("/write");
+  };
+
   const commentItems = Comments.map((commentItem) => {
     return (
       <CommentItem
@@ -258,7 +266,7 @@ const PostView = ({ match, history }) => {
                 {email === currentUser && (
                   <div className="onlyWriterCanSee">
                     <span onClick={postRemoveHandler}>삭제</span>
-                    <span>수정</span>
+                    <span onClick={postEditHandler}>수정</span>
                   </div>
                 )}
               </div>
