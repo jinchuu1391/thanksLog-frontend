@@ -4,7 +4,7 @@ import Responsive from "../components/Responsive";
 import axios from "axios";
 import { withRouter } from "react-router-dom";
 import timeConverter from "../helper/timeConverter";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Button from "../components/Button";
 import image from "../img/profile.png";
 const PostViewWrapper = styled(Responsive)`
@@ -47,7 +47,7 @@ const SubInfo = styled.div`
     padding-left: 1rem;
     display: flex;
     flex-direction: column;
-    .onlyWriter span {
+    .onlyWriterCanSee span {
       padding-right: 0.5rem;
       cursor: pointer;
       &:hover {
@@ -117,12 +117,23 @@ const CommentItemUpper = styled.div`
   }
 `;
 
-const CommentItem = withRouter(({ comment, history }) => {
+const CommentItem = withRouter(({ comment, history, currentUser }) => {
+  const dispatch = useDispatch();
   const goToProfile = () => {
     history.push(`/@${comment.User.email}`);
   };
   const commentRemoveHandler = () => {
-    console.log("delete");
+    axios
+      .delete("http://localhost:4000/comment/", {
+        data: {
+          token: localStorage.getItem("token"),
+          commentId: comment.id,
+        },
+      })
+      .then((res) => {
+        dispatch({ type: "RERENDER" });
+      })
+      .catch((err) => console.error(err));
   };
   return (
     <CommentItemWrapper>
@@ -136,10 +147,12 @@ const CommentItem = withRouter(({ comment, history }) => {
           <div className="subInfo_text">
             <b onClick={goToProfile}>{comment.User.username}</b>
             <span>{timeConverter(comment.createdAt)}</span>
-            <div className="onlyWriter">
-              <span onClick={commentRemoveHandler}>삭제</span>
-              <span>수정</span>
-            </div>
+            {currentUser === comment.User.email && (
+              <div className="onlyWriterCanSee">
+                <span onClick={commentRemoveHandler}>삭제</span>
+                <span>수정</span>
+              </div>
+            )}
           </div>
         </SubInfo>
       </CommentItemUpper>
@@ -159,11 +172,12 @@ const PostView = ({ match, history }) => {
   const { title, createdAt, content, Comments, User } = postData;
   const { username, profile_photo_url, email } = User ? User : "";
   const [comment, setComment] = useState("");
-  const [rerender, setRerender] = useState(false);
   const [currentUser, setCurrentUser] = useState("");
 
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const rerenderSign = useSelector((state) => state.rerender.rerender);
   const idFromParams = match.params.postId;
+  const dispatch = useDispatch();
 
   useEffect(() => {
     axios
@@ -179,7 +193,7 @@ const PostView = ({ match, history }) => {
       .catch((err) => {
         console.log(err);
       });
-  }, [idFromParams, rerender]);
+  }, [idFromParams, rerenderSign]);
 
   const goToProfile = (userMail) => {
     history.push(`/@${userMail}`);
@@ -198,7 +212,7 @@ const PostView = ({ match, history }) => {
       })
       .then((res) => {
         setComment("");
-        setRerender(!rerender);
+        dispatch({ type: "RERENDER" });
       })
       .catch((err) => console.log(err));
   };
@@ -218,7 +232,11 @@ const PostView = ({ match, history }) => {
 
   const commentItems = Comments.map((commentItem) => {
     return (
-      <CommentItem comment={commentItem} key={commentItem.id}></CommentItem>
+      <CommentItem
+        comment={commentItem}
+        currentUser={currentUser}
+        key={commentItem.id}
+      ></CommentItem>
     );
   });
 
@@ -238,7 +256,7 @@ const PostView = ({ match, history }) => {
                 <b onClick={() => goToProfile(email)}>{username}</b>
                 <span>{timeConverter(createdAt)}</span>
                 {email === currentUser && (
-                  <div className="onlyWriter">
+                  <div className="onlyWriterCanSee">
                     <span onClick={postRemoveHandler}>삭제</span>
                     <span>수정</span>
                   </div>
