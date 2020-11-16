@@ -34,9 +34,6 @@ const SubInfo = styled.div`
   font-size: 1.2rem;
   margin-top: 1rem;
   color: grey;
-  span {
-    padding-left: 1rem;
-  }
   img {
     width: 70px;
     height: 70px;
@@ -45,6 +42,19 @@ const SubInfo = styled.div`
   }
   b {
     cursor: pointer;
+  }
+  .subInfo_text {
+    padding-left: 1rem;
+    display: flex;
+    flex-direction: column;
+    .onlyWriter span {
+      padding-right: 0.5rem;
+      cursor: pointer;
+      &:hover {
+        color: #343a40;
+        font-weight: bold;
+      }
+    }
   }
 `;
 
@@ -71,6 +81,10 @@ const CommentInput = styled.input`
 
 const SmallButton = styled(Button)`
   width: 80px;
+`;
+
+const CommentsWrapper = styled.div`
+  margin-bottom: 300px;
 `;
 
 const CommentItemWrapper = styled.div`
@@ -103,38 +117,38 @@ const CommentItemUpper = styled.div`
   }
 `;
 
-const UserInfo = styled.div`
-  padding-left: 1.5rem;
-  display: flex;
-  flex-direction: column;
-`;
-
 const CommentItem = withRouter(({ comment, history }) => {
   const goToProfile = () => {
     history.push(`/@${comment.User.email}`);
   };
+  const commentRemoveHandler = () => {
+    console.log("delete");
+  };
   return (
     <CommentItemWrapper>
       <CommentItemUpper>
-        <img
-          src={comment.User.profile_photo_url}
-          alt=""
-          onClick={goToProfile}
-          className="commentWriter"
-        />
-        <UserInfo>
-          <div onClick={goToProfile} className="commentWriter">
-            {comment.User.username}
+        <SubInfo>
+          <img
+            src={comment.User.profile_photo_url}
+            alt="프사"
+            onClick={goToProfile}
+          ></img>
+          <div className="subInfo_text">
+            <b onClick={goToProfile}>{comment.User.username}</b>
+            <span>{timeConverter(comment.createdAt)}</span>
+            <div className="onlyWriter">
+              <span onClick={commentRemoveHandler}>삭제</span>
+              <span>수정</span>
+            </div>
           </div>
-          <div>{timeConverter(comment.createdAt)}</div>
-        </UserInfo>
+        </SubInfo>
       </CommentItemUpper>
       <div className="comment">{comment.comment}</div>
     </CommentItemWrapper>
   );
 });
 
-const PostView = ({ id, match, history }) => {
+const PostView = ({ match, history }) => {
   const [postData, setPostData] = useState({
     title: "",
     createdAt: "",
@@ -146,17 +160,19 @@ const PostView = ({ id, match, history }) => {
   const { username, profile_photo_url, email } = User ? User : "";
   const [comment, setComment] = useState("");
   const [rerender, setRerender] = useState(false);
+  const [currentUser, setCurrentUser] = useState("");
 
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const idFromParams = match.params.postId;
 
   useEffect(() => {
     axios
-      .post(`http://localhost:4000/post/${id ? id : idFromParams}`, {
+      .post(`http://localhost:4000/post/${idFromParams}`, {
         token: localStorage.getItem("token"),
       })
       .then((res) => {
         if (res.data.content[0]) {
+          setCurrentUser(res.data.currentUser);
           setPostData(res.data.content[0]);
         }
       })
@@ -165,8 +181,8 @@ const PostView = ({ id, match, history }) => {
       });
   }, [idFromParams, rerender]);
 
-  const goToProfile = () => {
-    history.push(`/@${email}`);
+  const goToProfile = (userMail) => {
+    history.push(`/@${userMail}`);
   };
 
   const onCommentChange = (e) => {
@@ -177,7 +193,7 @@ const PostView = ({ id, match, history }) => {
     axios
       .post("http://localhost:4000/comment", {
         comment: comment,
-        contentId: id ? id : idFromParams,
+        contentId: idFromParams,
         token: localStorage.getItem("token"),
       })
       .then((res) => {
@@ -185,6 +201,19 @@ const PostView = ({ id, match, history }) => {
         setRerender(!rerender);
       })
       .catch((err) => console.log(err));
+  };
+
+  const postRemoveHandler = () => {
+    if (window.confirm("정말로 삭제하시겠습니까?")) {
+      axios
+        .delete(`http://localhost:4000/post/${idFromParams}`, {
+          data: { token: localStorage.getItem("token") },
+        })
+        .then((res) => {
+          history.goBack();
+        })
+        .catch((err) => console.error(err));
+    }
   };
 
   const commentItems = Comments.map((commentItem) => {
@@ -203,13 +232,18 @@ const PostView = ({ id, match, history }) => {
               <img
                 src={profile_photo_url}
                 alt="프사"
-                onClick={goToProfile}
+                onClick={() => goToProfile(email)}
               ></img>
-              <span>
-                <b onClick={goToProfile}>{username}</b>
-                <br></br>
-                {timeConverter(createdAt)}
-              </span>
+              <div className="subInfo_text">
+                <b onClick={() => goToProfile(email)}>{username}</b>
+                <span>{timeConverter(createdAt)}</span>
+                {email === currentUser && (
+                  <div className="onlyWriter">
+                    <span onClick={postRemoveHandler}>삭제</span>
+                    <span>수정</span>
+                  </div>
+                )}
+              </div>
             </SubInfo>
           </PostHead>
           <PostContent
@@ -223,7 +257,7 @@ const PostView = ({ id, match, history }) => {
             ></CommentInput>
             <SmallButton onClick={commentHadler}>등록</SmallButton>
           </InputWrapper>
-          {commentItems.reverse()}
+          <CommentsWrapper>{commentItems.reverse()}</CommentsWrapper>
         </PostViewWrapper>
       ) : (
         <PostViewWrapper>
