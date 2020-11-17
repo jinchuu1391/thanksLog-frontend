@@ -123,17 +123,19 @@ const CommentItem = withRouter(({ comment, history, currentUser }) => {
     history.push(`/@${comment.User.email}`);
   };
   const commentRemoveHandler = () => {
-    axios
-      .delete("http://localhost:4000/comment/", {
-        data: {
-          token: localStorage.getItem("token"),
-          commentId: comment.id,
-        },
-      })
-      .then((res) => {
-        dispatch({ type: "RERENDER" });
-      })
-      .catch((err) => console.error(err));
+    if (window.confirm("정말로 삭제하시겠습니까?")) {
+      axios
+        .delete("http://localhost:4000/comment/", {
+          data: {
+            token: localStorage.getItem("token"),
+            commentId: comment.id,
+          },
+        })
+        .then((res) => {
+          dispatch({ type: "RERENDER" });
+        })
+        .catch((err) => console.error(err));
+    }
   };
 
   return (
