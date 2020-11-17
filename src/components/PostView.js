@@ -117,7 +117,17 @@ const CommentItemUpper = styled.div`
   }
 `;
 
+const CommentItemLower = styled.div`
+  width: 100%;
+`;
+
 const CommentItem = withRouter(({ comment, history, currentUser }) => {
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [commentToEdit, setCommentToEdit] = useState("");
+
+  useEffect(() => {
+    setCommentToEdit(comment.comment);
+  }, []);
   const dispatch = useDispatch();
   const goToProfile = () => {
     history.push(`/@${comment.User.email}`);
@@ -137,7 +147,29 @@ const CommentItem = withRouter(({ comment, history, currentUser }) => {
         .catch((err) => console.error(err));
     }
   };
-
+  const commentEditHandler = () => {
+    setIsEditMode(true);
+  };
+  const onChange = (e) => {
+    setCommentToEdit(e.target.value);
+  };
+  const onCancel = () => {
+    setCommentToEdit(comment.comment);
+    setIsEditMode(!isEditMode);
+  };
+  const onCommentUpdate = () => {
+    axios
+      .patch("http://localhost:4000/comment/", {
+        comment: commentToEdit,
+        commentId: comment.id,
+        token: localStorage.getItem("token"),
+      })
+      .then((res) => {
+        setIsEditMode(!isEditMode);
+        dispatch({ type: "RERENDER" });
+      })
+      .catch((err) => console.error(err));
+  };
   return (
     <CommentItemWrapper>
       <CommentItemUpper>
@@ -153,13 +185,27 @@ const CommentItem = withRouter(({ comment, history, currentUser }) => {
             {currentUser === comment.User.email && (
               <div className="onlyWriterCanSee">
                 <span onClick={commentRemoveHandler}>삭제</span>
-                <span>수정</span>
+                <span onClick={commentEditHandler}>수정</span>
               </div>
             )}
           </div>
         </SubInfo>
       </CommentItemUpper>
-      <div className="comment">{comment.comment}</div>
+      <CommentItemLower>
+        {isEditMode ? (
+          <InputWrapper>
+            <CommentInput
+              onChange={onChange}
+              placeholder={"댓글을 써보세요!"}
+              value={commentToEdit}
+            ></CommentInput>
+            <SmallButton onClick={onCancel}>취소</SmallButton>
+            <SmallButton onClick={onCommentUpdate}>등록</SmallButton>
+          </InputWrapper>
+        ) : (
+          <div className="comment">{comment.comment}</div>
+        )}
+      </CommentItemLower>
     </CommentItemWrapper>
   );
 });
