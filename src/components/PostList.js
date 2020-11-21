@@ -1,28 +1,18 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Responsive from "../components/Responsive";
-import Button from "../components/Button";
-import img from "../img/profile.png";
-import { useSelector } from "react-redux";
 import axios from "axios";
 import timeConverter from "../helper/timeConverter";
 import { withRouter } from "react-router-dom";
 
 const PostListWrapper = styled(Responsive)`
-  margin-top: 1rem;
-`;
-const WritePostButtonWrapper = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 3rem;
+  margin-top: 3rem;
 `;
 
 const PostItemWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
-  padding-top: 0.5rem;
   align-items: center;
-  padding-bottom: 0.5rem;
+  padding-bottom: 1rem;
   &:first-child {
     padding-top: 0;
   }
@@ -31,8 +21,7 @@ const PostItemWrapper = styled.div`
   }
 `;
 
-const PostItemRight = styled.div`
-  width: 20%;
+const PostItemLeft = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -41,6 +30,7 @@ const PostItemRight = styled.div`
   img {
     width: 80px;
     height: 80px;
+    object-fit: cover;
     border-radius: 50%;
     cursor: pointer;
   }
@@ -51,18 +41,28 @@ const PostItemRight = styled.div`
   }
 `;
 
-const PostItemLeft = styled.div`
+const PostItemRight = styled.div`
+  padding-left: 1rem;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  .title {
-    font-size: 3rem;
+  align-items: left;
+  .upperSection {
+    display: flex;
+    justify-content: space-between;
+  }
+  .upperSection .title {
+    font-size: 1.5rem;
     &:hover {
       cursor: pointer;
     }
   }
-  .subInfo {
+  .upperSction .createdAt {
     color: grey;
+  }
+  .lowerSection {
+    display: flex;
+    justify-content: space-between;
   }
 `;
 
@@ -80,20 +80,24 @@ const PostItem = withRouter(({ post, history }) => {
   return (
     <PostItemWrapper>
       <PostItemLeft>
-        <div className={"title"} onClick={onTitleClick}>
-          {title}
-        </div>
-        <div className={"subInfo"}>{timeConverter(createdAt)}</div>
-        <div className={"subInfo"}>{post.Comments.length}개의 댓글</div>
-      </PostItemLeft>
-      <PostItemRight>
         <img
           src={User.profile_photo_url}
           alt="프사"
           onClick={onUserClick}
         ></img>
-        <div className={"username"} onClick={onUserClick}>
-          {User.username}
+      </PostItemLeft>
+      <PostItemRight>
+        <div className="upperSection">
+          <div className="title" onClick={onTitleClick}>
+            {title}
+          </div>
+          <div className="createdAt">{timeConverter(createdAt)}</div>
+        </div>
+        <div className="lowerSection">
+          <div className={"username"} onClick={onUserClick}>
+            {User.username}
+          </div>
+          <div className={"subInfo"}>{post.Comments.length}개의 댓글</div>
         </div>
       </PostItemRight>
     </PostItemWrapper>
@@ -101,7 +105,6 @@ const PostItem = withRouter(({ post, history }) => {
 });
 
 const PostList = () => {
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
@@ -119,9 +122,6 @@ const PostList = () => {
 
   return (
     <PostListWrapper>
-      <WritePostButtonWrapper>
-        {isLoggedIn && <Button to="/write">새 글 작성하기</Button>}
-      </WritePostButtonWrapper>
       <div>{postItems.reverse()}</div>
     </PostListWrapper>
   );
