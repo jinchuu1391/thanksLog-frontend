@@ -3,6 +3,7 @@ const LOGOUT = "LOGOUT";
 
 const initialState = {
   isLoggedIn: false,
+  user: "",
 };
 
 function auth(state = initialState, action) {
@@ -10,10 +11,12 @@ function auth(state = initialState, action) {
     case LOGIN:
       return {
         isLoggedIn: true,
+        user: action.user,
       };
     case LOGOUT:
       return {
         isLoggedIn: false,
+        user: "",
       };
     default:
       return state;

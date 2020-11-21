@@ -17,7 +17,6 @@ const AuthFormWrapper = styled.div`
     justify-content: center;
     align-items: center;
     img {
-      /* border: 1px solid black; */
       border-radius: 50%;
       width: 180px;
       height: 180px;
@@ -72,7 +71,6 @@ const StyledInput = styled.input`
   padding-bottom: 0.5rem;
   outline: none;
 `;
-
 const Footer = styled.div`
   margin-top: 2rem;
   text-align: right;
@@ -173,7 +171,7 @@ const AuthForm = ({ type, history }) => {
         )
         .then((res) => {
           localStorage.setItem("token", res.data.token);
-          dispatch({ type: "LOGIN" });
+          dispatch({ type: "LOGIN", user: email });
           history.push("/");
         })
         .catch((err) => {
