@@ -4,18 +4,18 @@ import styled from "styled-components";
 import Responsive from "./Responsive";
 import Button from "./Button";
 import { withRouter } from "react-router-dom";
+import logo from "../img/logo.png";
 
 const Wrapper = styled(Responsive)`
-  margin-top: 15px;
-  height: 4rem;
+  margin-top: 4rem;
+  height: 11rem;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  img {
+    width: 12rem;
+  }
   .logo {
-    color: #343a40;
-    font-size: 1.5rem;
-    font-weight: 800;
-    letter-spacing: 2px;
+    width: 12rem;
     cursor: pointer;
   }
   .right {
@@ -25,30 +25,14 @@ const Wrapper = styled(Responsive)`
 `;
 
 const Navbar = ({ history }) => {
-  const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-  const logoutHandler = () => {
-    dispatch({ type: "LOGOUT" });
-    localStorage.removeItem("token");
-  };
-
   const goToMainPage = () => {
     history.push("/");
   };
 
   return (
     <Wrapper>
-      <div className="logo" onClick={goToMainPage}>
-        함께쓰는 감사일기
-      </div>
-      <div className="right">
-        {isLoggedIn ? (
-          <Button to="/" onClick={logoutHandler}>
-            로그아웃
-          </Button>
-        ) : (
-          <Button to="/login">로그인</Button>
-        )}
+      <div className="logo">
+        <img src={logo} onClick={goToMainPage} alt="logo" />
       </div>
     </Wrapper>
   );
