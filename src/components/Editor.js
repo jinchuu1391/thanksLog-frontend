@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import Quill from "quill";
 import styled from "styled-components";
-import "quill/dist/quill.bubble.css";
+import "quill/dist/quill.snow.css";
 import Responsive from "../components/Responsive";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -41,17 +41,20 @@ const Editor = () => {
     dispatch({ type: "CHANGE_TITLE", title: e.target.value });
   };
   useEffect(() => {
+    var toolbarOptions = [
+      ["bold", "italic", "underline", "strike"],
+      [{ header: 1 }, { header: 2 }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      [{ size: ["small", false, "large", "huge"] }],
+      [{ color: [] }, { background: [] }],
+      [{ align: [] }],
+    ];
     quillInstance.current = new Quill(quillElement.current, {
-      theme: "bubble",
+      theme: "snow",
       placeholder:
         "내용을 써주세요, 텍스트를 드래그하면 스타일을 수정할 수 있어요!",
       modules: {
-        toolbar: [
-          [{ header: "1" }, { header: "2" }],
-          ["bold", "italic", "underline", "strike"],
-          [{ list: "ordered" }, { list: "bullet" }],
-          ["blockquote", "code-block", "link", "image"],
-        ],
+        toolbar: toolbarOptions,
       },
     });
     const quill = quillInstance.current;

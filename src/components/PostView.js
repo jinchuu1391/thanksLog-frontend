@@ -6,9 +6,10 @@ import { withRouter } from "react-router-dom";
 import timeConverter from "../helper/timeConverter";
 import { useSelector, useDispatch } from "react-redux";
 import Button from "../components/Button";
-import image from "../img/profile.png";
+
 const PostViewWrapper = styled(Responsive)`
-  margin-top: 4rem;
+  margin-top: 3rem;
+  margin-bottom: 9rem;
 `;
 
 const PostHead = styled.div`
@@ -35,8 +36,9 @@ const SubInfo = styled.div`
   margin-top: 1rem;
   color: grey;
   img {
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
     border-radius: 50%;
     cursor: pointer;
   }
@@ -60,8 +62,7 @@ const SubInfo = styled.div`
 
 const PostContent = styled.div`
   font-size: 1.3rem;
-  color: #343a40;
-  min-height: 300px;
+  min-height: 20rem;
 `;
 
 const InputWrapper = styled.div`
@@ -81,10 +82,6 @@ const CommentInput = styled.input`
 
 const SmallButton = styled(Button)`
   width: 80px;
-`;
-
-const CommentsWrapper = styled.div`
-  margin-bottom: 300px;
 `;
 
 const CommentItemWrapper = styled.div`
@@ -320,9 +317,11 @@ const PostView = ({ match, history }) => {
               </div>
             </SubInfo>
           </PostHead>
-          <PostContent
-            dangerouslySetInnerHTML={{ __html: content }}
-          ></PostContent>
+          <div className="ql-editor">
+            <PostContent
+              dangerouslySetInnerHTML={{ __html: content }}
+            ></PostContent>
+          </div>
           <InputWrapper>
             <CommentInput
               placeholder={"댓글을 써보세요!"}
@@ -331,7 +330,8 @@ const PostView = ({ match, history }) => {
             ></CommentInput>
             <SmallButton onClick={commentHadler}>등록</SmallButton>
           </InputWrapper>
-          <CommentsWrapper>{commentItems.reverse()}</CommentsWrapper>
+          <div>{commentItems.reverse()}</div>
+          {/* <CommentsWrapper></CommentsWrapper> */}
         </PostViewWrapper>
       ) : (
         <PostViewWrapper>
