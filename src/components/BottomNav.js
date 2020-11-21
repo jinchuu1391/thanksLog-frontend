@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import Responsive from "./Responsive";
-import Button from "./Button";
 import { withRouter } from "react-router-dom";
-import logo from "../img/logo.png";
 import writeDefault from "../img/writeDefault.png";
 import writeOnHover from "../img/writeOnHover.png";
 import myMenuDefault from "../img/myMenuDefault.png";
@@ -51,7 +49,10 @@ const Innner = styled(Responsive)`
 
 const BottomNavbar = ({ history }) => {
   const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const userInfo = useSelector((state) => state.auth);
+  const isLoggedIn = userInfo.isLoggedIn;
+  const usermail = userInfo.user;
+
   const logoutHandler = () => {
     dispatch({ type: "LOGOUT" });
     localStorage.removeItem("token");
@@ -62,7 +63,7 @@ const BottomNavbar = ({ history }) => {
   };
 
   const goToProfilePage = () => {
-    history.push("");
+    history.push(`/@${usermail}`);
   };
 
   const goToLoginPage = () => {
@@ -80,7 +81,7 @@ const BottomNavbar = ({ history }) => {
               </div>
             </div>
             <div className="right">
-              <div className="buttons">
+              <div className="buttons" onClick={goToProfilePage}>
                 <img src={myMenuDefault} alt="myMenu"></img>
                 <img src={myMenuOnHover} alt="myMenu"></img>
               </div>
