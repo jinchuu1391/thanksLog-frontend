@@ -14,7 +14,8 @@ const store = createStore(reducer, composeWithDevTools());
 function checkToken() {
   const token = localStorage.getItem("token");
   if (token) {
-    store.dispatch({ type: "LOGIN" });
+    const user = localStorage.getItem("user");
+    store.dispatch({ type: "LOGIN", user: user });
   } else {
     store.dispatch({ type: "LOGOUT" });
   }
