@@ -10,30 +10,29 @@ const Wrapper = styled(Responsive)`
   margin-top: 4rem;
   height: 11rem;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   img {
     width: 12rem;
-  }
-  .logo {
-    width: 12rem;
     cursor: pointer;
   }
-  .right {
-    display: flex;
-    align-items: center;
+  #intro {
+    margin-top: 2rem;
+    font-size: 1.2rem;
+    background-color: beige;
   }
 `;
 
-const Navbar = ({ history }) => {
+const Navbar = ({ history, children }) => {
   const goToMainPage = () => {
     history.push("/");
   };
 
   return (
     <Wrapper>
-      <div className="logo">
-        <img src={logo} onClick={goToMainPage} alt="logo" />
-      </div>
+      <img src={logo} onClick={goToMainPage} alt="logo" />
+      <div id="intro">{children}</div>
     </Wrapper>
   );
 };
