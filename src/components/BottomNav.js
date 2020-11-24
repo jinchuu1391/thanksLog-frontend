@@ -11,6 +11,7 @@ import logoutDefault from "../img/logoutDefault.png";
 import logoutOnHover from "../img/logoutOnHover.png";
 import loginOnDefault from "../img/loginOnDefault.png";
 import loginOnHover from "../img/loginOnHover.png";
+import axios from "axios";
 
 const Wrapper = styled.div`
   background-color: rgba(30, 30, 30);
@@ -45,6 +46,15 @@ const Innner = styled(Responsive)`
   .right {
     display: flex;
   }
+  #testLogin {
+    color: white;
+    &:hover {
+      cursor: pointer;
+      background-color: beige;
+      color: black;
+      border-radius: 5px;
+    }
+  }
 `;
 
 const BottomNavbar = ({ history }) => {
@@ -68,6 +78,30 @@ const BottomNavbar = ({ history }) => {
 
   const goToLoginPage = () => {
     history.push("/login");
+  };
+  const testLoginHandler = () => {
+    axios
+      .post(
+        "http://localhost:4000/auth/signin",
+        {
+          email: "test2@mail.com",
+          password: "1234",
+        },
+        {
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      )
+      .then((res) => {
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("user", "test2@mail.com");
+        dispatch({ type: "LOGIN", user: "test2@mail.com" });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   };
   return (
     <Wrapper>
@@ -93,7 +127,9 @@ const BottomNavbar = ({ history }) => {
           </>
         ) : (
           <>
-            <div></div>
+            <div id="testLogin" onClick={testLoginHandler}>
+              테스트 계정으로 로그인(기업용)
+            </div>
             <div className="buttons" onClick={goToLoginPage}>
               <img src={loginOnDefault} alt="login" />
               <img src={loginOnHover} alt="login" />
