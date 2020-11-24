@@ -10,6 +10,14 @@ const WritePage = ({ history }) => {
   const dispatch = useDispatch();
   const { id, title, body, editMode } = useSelector((state) => state.post);
   const postHandler = () => {
+    if (title === "") {
+      alert("제목을 입력해주세요");
+      return;
+    }
+    if (body === "") {
+      alert("내용을 입력해주세요");
+      return;
+    }
     axios
       .post("http://localhost:4000/post", {
         title: title,
