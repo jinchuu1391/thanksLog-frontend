@@ -114,6 +114,13 @@ const AuthForm = ({ type, history }) => {
     };
     setForm(nextForm);
   };
+
+  const enterKeyHandler = (e) => {
+    if (e.key === "Enter") {
+      loginHandler();
+    }
+  };
+
   const onImgSelect = (e) => {
     e.preventDefault();
     setImg(e.target.files[0]);
@@ -129,14 +136,13 @@ const AuthForm = ({ type, history }) => {
     }
   };
 
-  const loginHandler = (e) => {
+  const loginHandler = () => {
     if (email === "") {
       return alert("이메일을 입력해주세요");
     }
     if (password === "") {
       return alert("비밀번호를 입력해주세요");
     }
-    e.preventDefault();
     if (type === "register") {
       if (password !== passwordConfirm) {
         return alert("비밀번호를 다시 확인해주세요");
@@ -214,12 +220,14 @@ const AuthForm = ({ type, history }) => {
             name="email"
             placeholder="이메일"
             onChange={onChange}
+            onKeyPress={enterKeyHandler}
           ></StyledInput>
           {type === "register" && (
             <StyledInput
               name="username"
               placeholder="이름"
               onChange={onChange}
+              onKeyPress={enterKeyHandler}
             ></StyledInput>
           )}
           <StyledInput
@@ -227,6 +235,7 @@ const AuthForm = ({ type, history }) => {
             type="password"
             placeholder="비밀번호"
             onChange={onChange}
+            onKeyPress={enterKeyHandler}
           ></StyledInput>
           {type === "register" && (
             <>
@@ -235,11 +244,13 @@ const AuthForm = ({ type, history }) => {
                 placeholder="비밀번호 확인"
                 type="password"
                 onChange={onChange}
+                onKeyPress={enterKeyHandler}
               ></StyledInput>
               <StyledInput
                 name="introduce"
                 onChange={onChange}
                 placeholder="자신을 소개해주세요(선택)"
+                onKeyPress={enterKeyHandler}
               ></StyledInput>
             </>
           )}
