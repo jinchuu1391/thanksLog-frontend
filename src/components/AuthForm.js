@@ -5,6 +5,7 @@ import Button from "./Button";
 import axios from "axios";
 import { withRouter } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import logo from "../img/logo.png";
 
 const AuthFormWrapper = styled.div`
   .formContainer {
@@ -16,11 +17,15 @@ const AuthFormWrapper = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    img {
+    .profileImg {
       border-radius: 50%;
       width: 180px;
       height: 180px;
       margin-bottom: 1rem;
+    }
+    .logo {
+      width: 180px;
+      cursor: pointer;
     }
   }
   form {
@@ -195,6 +200,10 @@ const AuthForm = ({ type, history }) => {
     }
   };
 
+  const goToMainPage = () => {
+    history.push("/");
+  };
+
   const mode = modeMap[type];
   return (
     <AuthFormWrapper>
@@ -235,9 +244,10 @@ const AuthForm = ({ type, history }) => {
             </>
           )}
         </div>
-        {type === "register" && (
+        {type === "register" ? (
           <div className="form_right">
             <img
+              className="profileImg"
               src={
                 imgPreview
                   ? imgPreview
@@ -251,6 +261,10 @@ const AuthForm = ({ type, history }) => {
               </label>
               <input type="file" id="ex_file" onChange={onImgSelect}></input>
             </div>
+          </div>
+        ) : (
+          <div className="form_right">
+            <img className="logo" src={logo} alt="" onClick={goToMainPage} />
           </div>
         )}
       </form>
