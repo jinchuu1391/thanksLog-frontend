@@ -145,7 +145,7 @@ const AuthForm = ({ type, history }) => {
         })
         .then((res) => {
           localStorage.setItem("token", res.data.token);
-          dispatch({ type: "LOGIN" });
+          dispatch({ type: "LOGIN", user: email });
           history.push("/");
         })
         .catch((err) => {
