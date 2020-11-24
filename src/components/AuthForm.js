@@ -125,6 +125,12 @@ const AuthForm = ({ type, history }) => {
   };
 
   const loginHandler = (e) => {
+    if (email === "") {
+      return alert("이메일을 입력해주세요");
+    }
+    if (password === "") {
+      return alert("비밀번호를 입력해주세요");
+    }
     e.preventDefault();
     if (type === "register") {
       if (password !== passwordConfirm) {
@@ -150,9 +156,10 @@ const AuthForm = ({ type, history }) => {
           history.push("/");
         })
         .catch((err) => {
-          console.log(err.response.status);
           if (err.response.status === "409") {
             alert("이미 사용중인 메일 입니다");
+          } else {
+            console.error(err);
           }
         });
     } else if (type === "login") {
@@ -181,6 +188,8 @@ const AuthForm = ({ type, history }) => {
             alert("존재하지 않는 계정입니다");
           } else if (err.response.data.code === "401b") {
             alert("잘못된 정보 입니다");
+          } else {
+            console.error(err);
           }
         });
     }
