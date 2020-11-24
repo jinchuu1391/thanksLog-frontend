@@ -34,11 +34,6 @@ const PostItemLeft = styled.div`
     border-radius: 50%;
     cursor: pointer;
   }
-  .username {
-    margin-top: 0.5rem;
-    color: grey;
-    cursor: pointer;
-  }
 `;
 
 const PostItemRight = styled.div`
@@ -47,12 +42,14 @@ const PostItemRight = styled.div`
   display: flex;
   flex-direction: column;
   align-items: left;
+  color: grey;
   .upperSection {
     display: flex;
     justify-content: space-between;
   }
   .upperSection .title {
     font-size: 1.5rem;
+    color: #343a40;
     &:hover {
       cursor: pointer;
     }
@@ -63,6 +60,11 @@ const PostItemRight = styled.div`
   .lowerSection {
     display: flex;
     justify-content: space-between;
+    .username {
+      /* margin-top: 0.5rem; */
+      color: grey;
+      cursor: pointer;
+    }
   }
 `;
 
@@ -94,10 +96,10 @@ const PostItem = withRouter(({ post, history }) => {
           <div className="createdAt">{timeConverter(createdAt)}</div>
         </div>
         <div className="lowerSection">
-          <div className={"username"} onClick={onUserClick}>
+          <div className="username" onClick={onUserClick}>
             {User.username}
           </div>
-          <div className={"subInfo"}>{post.Comments.length}개의 댓글</div>
+          <div className="subInfo">{post.Comments.length}개의 댓글</div>
         </div>
       </PostItemRight>
     </PostItemWrapper>
