@@ -13,8 +13,8 @@ const store = createStore(reducer, composeWithDevTools());
 
 function checkToken() {
   const token = localStorage.getItem("token");
+  const user = localStorage.getItem("user");
   if (token) {
-    const user = localStorage.getItem("user");
     store.dispatch({ type: "LOGIN", user: user });
   } else {
     store.dispatch({ type: "LOGOUT" });
