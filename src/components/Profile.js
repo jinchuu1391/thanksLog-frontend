@@ -1,56 +1,122 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
 import Button from "./Button";
 import axios from "axios";
 import { withRouter } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import AuthTemplate from "./AuthTemplate";
-import img from "../img/profile.png";
-import timeConverter from "../helper/timeConverter";
 
-const ProfileWrapper = styled(AuthTemplate)`
-  width: 700px;
+import timeConverter from "../helper/timeConverter";
+import Responsive from "../components/Responsive";
+
+const ProfileWrapper = styled(Responsive)`
+  display: flex;
+  flex-direction: column;
+  margin-top: 5rem;
+  margin-bottom: 10rem;
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+  }
+`;
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`;
+const SmallButton = styled(Button)`
+  width: 120px;
+  margin: 0.25rem;
+`;
+
+const UserInfoWrapper = styled.div`
+  display: flex;
+  @media (max-width: 1024px) {
+    flex-direction: row;
+  }
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+const UserImgWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  img {
+    width: 500px;
+    height: 500px;
+    object-fit: cover;
+    border-radius: 30px;
+  }
+  .buttons {
+    display: flex;
+    .filebox label,
+    .basic {
+      margin: 0.25rem;
+      width: 120px;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      display: inline-block;
+      padding: 0.5rem;
+      color: #fff;
+      background-color: #343a40;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .filebox label:hover,
+    .basic:hover {
+      background-color: grey;
+    }
+
+    .filebox input[type="file"] {
+      position: absolute;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+  }
+`;
+const UserInfoDescription = styled.div`
+  width: 100%;
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+  }
+  padding-left: 2rem;
+  font-size: 1.5rem;
+  color: #343a40;
+  display: flex;
+  flex-direction: column;
+  .userInfo {
+    padding-top: 1rem;
+  }
+  .userInfo_password {
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    .passwordConfirm {
+      margin-top: 1rem;
+    }
+  }
+`;
+const PostInfoWrapper = styled.div`
+  @media (max-width: 768px) {
+    width: 500px;
+  }
   display: flex;
   flex-direction: column;
 `;
 
-const UserInfo = styled.div`
-  height: 50%;
-  display: flex;
-  justify-content: space-around;
-  /* align-items: center; */
-  .button {
-    color: green;
-    cursor: pointer;
-  }
-  .imageSection {
-    img {
-      width: 200px;
-      height: 200px;
-      border-radius: 5px;
-    }
-  }
-  .userInfoSection {
-    display: flex;
-    flex-direction: column;
-  }
-  .rightSection {
-    display: flex;
-    flex-direction: column;
-  }
-`;
-
-const PostInfo = styled.div`
-  height: 50%;
-`;
-
 const PostItemWrapper = styled.div`
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+  font-size: 1.5rem;
+  color: #343a40;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding-bottom: 0.5rem;
   padding-top: 0.5rem;
+  &:hover {
+    color: grey;
+  }
   &:first-child {
     padding-top: 2rem;
   }
@@ -60,6 +126,30 @@ const PostItemWrapper = styled.div`
   .title {
     cursor: pointer;
   }
+`;
+const NeedLogin = styled.div`
+  text-align: center;
+  font-size: 3rem;
+`;
+const SmallInput = styled.input`
+  width: 50%;
+  height: 2rem;
+  font-size: 1rem;
+  color: #343a40;
+  border: 1px solid grey;
+  border-radius: 5px;
+  outline: none;
+  padding: 1rem;
+`;
+const BigInput = styled.input`
+  width: 100%;
+  height: 2rem;
+  font-size: 1rem;
+  color: #343a40;
+  border: 1px solid grey;
+  border-radius: 5px;
+  outline: none;
+  padding: 1rem;
 `;
 
 const PostItem = withRouter(({ post, history }) => {
@@ -76,13 +166,14 @@ const PostItem = withRouter(({ post, history }) => {
   );
 });
 
-const NeedLogin = styled.div`
-  text-align: center;
-  font-size: 3rem;
-`;
-
 const Profile = withRouter(({ match }) => {
-  const [profileData, setProfileData] = useState("");
+  const [profileData, setProfileData] = useState({
+    username: "",
+    email: "",
+    profile_photo_url: "",
+    introduce: "",
+    Contents: [],
+  });
   const {
     username,
     email,
@@ -90,17 +181,42 @@ const Profile = withRouter(({ match }) => {
     introduce,
     Contents,
   } = profileData;
+  const [currentUser, setCurrentUser] = useState("");
+
+  const [passwordToChange, setPasswordToChange] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [img, setImg] = useState(null);
+  const [imgPreview, setImgPreview] = useState(null);
+  const nameToEdit = useSelector((state) => state.auth.nameToEdit);
+  const introduceToEdit = useSelector((state) => state.auth.introduceToEdit);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const editMode = useSelector((state) => state.auth.editMode);
+
+  const rerenderSign = useSelector((state) => state.rerender.rerender);
+  const emailFromParams = match.params.email;
+
+  const dispatch = useDispatch();
+
   useEffect(() => {
     axios
-      .post(`http://localhost:4000/auth/mypage/${match.params.email}`, {
+      .post(`http://localhost:4000/auth/mypage/${emailFromParams}`, {
         token: localStorage.getItem("token"),
       })
       .then((res) => {
-        setProfileData(res.data[0]);
+        setCurrentUser(res.data.currentUser);
+        setProfileData(res.data.userInfo);
+        dispatch({
+          type: "PROFILE_LOADED",
+          name: res.data.userInfo.username,
+          introduce: res.data.userInfo.introduce,
+        });
       })
       .catch((err) => console.log(err));
-  }, []);
+    return () => {
+      dispatch({ type: "PROFILE_INITIALIZE" });
+      dispatch({ type: "PROFILE_EDIT_MODE_CHANGE", mode: false });
+    };
+  }, [rerenderSign, emailFromParams]);
 
   const postItems = Contents
     ? Contents.map((post) => {
@@ -108,27 +224,175 @@ const Profile = withRouter(({ match }) => {
       })
     : [];
 
+  const profileEditHandler = () => {
+    dispatch({ type: "PROFILE_EDIT_MODE_CHANGE", mode: true });
+  };
+
+  const onCancel = () => {
+    dispatch({ type: "NAME_CHANGE", name: username });
+    dispatch({ type: "INTRODUCE_CHANGE", introduce: introduce });
+    dispatch({ type: "PROFILE_EDIT_MODE_CHANGE", mode: false });
+    setImgPreview(null);
+  };
+
+  const onEdited = (e) => {
+    e.preventDefault();
+    const Data = new FormData();
+    Data.append("username", nameToEdit);
+    Data.append("introduce", introduceToEdit);
+    Data.append("img", img);
+    Data.append("token", localStorage.getItem("token"));
+    if (passwordToChange.length >= 1) {
+      if (passwordToChange === passwordConfirm) {
+        Data.append("password", passwordToChange);
+        axios
+          .post("http://localhost:4000/auth/profileupdate", Data, {
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8",
+              "Access-Control-Allow-Origin": "*",
+            },
+          })
+          .then((res) => {
+            setPasswordToChange("");
+            setPasswordConfirm("");
+            dispatch({ type: "RERENDER" });
+          })
+          .catch((err) => console.log(err));
+      } else {
+        alert("비밀번호와 비밀번호 확인란이 일치하지 않습니다");
+      }
+    } else {
+      axios
+        .post("http://localhost:4000/auth/profileupdate", Data, {
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8",
+            "Access-Control-Allow-Origin": "*",
+          },
+        })
+        .then((res) => {
+          setPasswordToChange("");
+          setPasswordConfirm("");
+          dispatch({ type: "RERENDER" });
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+  const onImgSelect = (e) => {
+    e.preventDefault();
+    setImg(e.target.files[0]);
+    const reader = new FileReader();
+    const file = e.target.files[0];
+    reader.onloadend = (e) => {
+      setImgPreview(e.target.result);
+    };
+    if (file) {
+      reader.readAsDataURL(file);
+    } else {
+      setImgPreview(null);
+    }
+  };
+  const onNameChange = (e) => {
+    dispatch({
+      type: "NAME_CHANGE",
+      name: e.target.value,
+    });
+  };
+  const onIntroduceChange = (e) => {
+    dispatch({
+      type: "INTRODUCE_CHANGE",
+      introduce: e.target.value,
+    });
+  };
+  const onPasswordChange = (e) => {
+    setPasswordToChange(e.target.value);
+  };
+  const onPasswordConfirmChange = (e) => {
+    setPasswordConfirm(e.target.value);
+  };
+  const onBasicImgClick = () => {
+    setImgPreview(
+      "https://user-images.githubusercontent.com/62422486/98907760-b282a200-2502-11eb-9e27-acb392842a92.png"
+    );
+  };
   return (
     <>
       {isLoggedIn ? (
         <ProfileWrapper>
-          <UserInfo>
-            <div className="imageSection">
-              <img src={profile_photo_url} alt="프사"></img>
-              <div className="button">사진 올리기</div>
-              <div className="button">사진 삭제</div>
-            </div>
-            <div className="userInfoSection">
-              <div>{username}</div>
-              <div>{email}</div>
-              <div>{introduce}</div>
-            </div>
-            <div className="rightSection">
-              <div className="button">수정하기</div>
-              <div className="button">탈퇴하기</div>
-            </div>
-          </UserInfo>
-          <PostInfo>{postItems}</PostInfo>
+          {currentUser === email && (
+            <ButtonWrapper>
+              {editMode ? (
+                <>
+                  <SmallButton onClick={onCancel}>취소하기</SmallButton>
+                  <SmallButton onClick={onEdited}>적용하기</SmallButton>
+                </>
+              ) : (
+                <SmallButton onClick={profileEditHandler}>수정하기</SmallButton>
+              )}
+            </ButtonWrapper>
+          )}
+          <UserInfoWrapper>
+            <UserImgWrapper>
+              <img
+                src={imgPreview ? imgPreview : profile_photo_url}
+                alt="userImage"
+              />
+              {editMode && (
+                <div className="buttons">
+                  <div className="filebox">
+                    <label for="ex_file">이미지 업로드</label>
+                    <input
+                      onChange={onImgSelect}
+                      type="file"
+                      id="ex_file"
+                    ></input>
+                  </div>
+                  <div className="basic" onClick={onBasicImgClick}>
+                    기본 이미지
+                  </div>
+                </div>
+              )}
+            </UserImgWrapper>
+            <UserInfoDescription>
+              <div className="userInfo">{email}</div>
+              {editMode ? (
+                <form encType="multipart/form-data">
+                  <div className="userInfo">
+                    <SmallInput
+                      placeholder="이름"
+                      value={nameToEdit}
+                      name="NAME"
+                      onChange={onNameChange}
+                    ></SmallInput>
+                  </div>
+                  <div className="userInfo">
+                    <BigInput
+                      placeholder="소개말"
+                      value={introduceToEdit}
+                      name="INTRODUCE"
+                      onChange={onIntroduceChange}
+                    ></BigInput>
+                  </div>
+                  <div className="userInfo_password">
+                    <SmallInput
+                      placeholder="바꾸고 싶은 비밀번호"
+                      onChange={onPasswordChange}
+                    ></SmallInput>
+                    <SmallInput
+                      placeholder="바꾸고 싶은 비밀번호 확인"
+                      className="passwordConfirm"
+                      onChange={onPasswordConfirmChange}
+                    ></SmallInput>
+                  </div>
+                </form>
+              ) : (
+                <>
+                  <div className="userInfo">{username}</div>
+                  <div className="userInfo">{introduce}</div>
+                </>
+              )}
+            </UserInfoDescription>
+          </UserInfoWrapper>
+          <PostInfoWrapper>{postItems}</PostInfoWrapper>
         </ProfileWrapper>
       ) : (
         <ProfileWrapper>
