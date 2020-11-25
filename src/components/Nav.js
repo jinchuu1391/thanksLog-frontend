@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React from "react";
 import styled from "styled-components";
 import Responsive from "./Responsive";
-import Button from "./Button";
 import { withRouter } from "react-router-dom";
 import logo from "../img/logo.png";
 

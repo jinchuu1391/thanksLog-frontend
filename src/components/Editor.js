@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import Quill from "quill";
 import styled from "styled-components";
 import "quill/dist/quill.snow.css";
