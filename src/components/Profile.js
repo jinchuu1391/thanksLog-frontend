@@ -199,7 +199,7 @@ const Profile = withRouter(({ match }) => {
 
   useEffect(() => {
     axios
-      .post(`http://localhost:4000/auth/mypage/${emailFromParams}`, {
+      .post(`http://54.180.83.133:3000/auth/mypage/${emailFromParams}`, {
         token: localStorage.getItem("token"),
       })
       .then((res) => {
@@ -244,12 +244,12 @@ const Profile = withRouter(({ match }) => {
     Data.append("token", localStorage.getItem("token"));
     if (passwordToChange.length >= 1) {
       if (passwordToChange === passwordConfirm) {
-        if (localStorage.getItem("user") === "test2@mail.com") {
+        if (localStorage.getItem("user") === "test@mail.com") {
           return alert("테스트 계정은 비밀번호를 바꿀 수 없습니다");
         }
         Data.append("password", passwordToChange);
         axios
-          .post("http://localhost:4000/auth/profileupdate", Data, {
+          .post("http://54.180.83.133:3000/auth/profileupdate", Data, {
             headers: {
               "Content-Type": "application/json;charset=UTF-8",
               "Access-Control-Allow-Origin": "*",
@@ -266,7 +266,7 @@ const Profile = withRouter(({ match }) => {
       }
     } else {
       axios
-        .post("http://localhost:4000/auth/profileupdate", Data, {
+        .post("http://54.180.83.133:3000/auth/profileupdate", Data, {
           headers: {
             "Content-Type": "application/json;charset=UTF-8",
             "Access-Control-Allow-Origin": "*",

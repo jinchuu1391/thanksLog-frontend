@@ -111,7 +111,7 @@ const PostList = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:4000/post")
+      .get("http://54.180.83.133:3000/post")
       .then((res) => {
         setPosts(res.data);
       })

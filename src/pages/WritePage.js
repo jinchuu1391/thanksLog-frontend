@@ -19,7 +19,7 @@ const WritePage = ({ history }) => {
       return;
     }
     axios
-      .post("http://localhost:4000/post", {
+      .post("http://54.180.83.133:3000/post", {
         title: title,
         content: body,
         token: localStorage.getItem("token"),
@@ -33,7 +33,7 @@ const WritePage = ({ history }) => {
   };
   const updateHandler = () => {
     axios
-      .patch(`http://localhost:4000/post/${id}`, {
+      .patch(`http://54.180.83.133:3000/post/${id}`, {
         title: title,
         content: body,
         token: localStorage.getItem("token"),

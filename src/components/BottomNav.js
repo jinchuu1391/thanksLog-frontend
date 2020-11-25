@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import Responsive from "./Responsive";
@@ -82,10 +82,10 @@ const BottomNavbar = ({ history }) => {
   const testLoginHandler = () => {
     axios
       .post(
-        "http://localhost:4000/auth/signin",
+        "http://54.180.83.133:3000/auth/signin",
         {
-          email: "test2@mail.com",
-          password: "1234",
+          email: "test@mail.com",
+          password: "test",
         },
         {
           headers: {
@@ -96,8 +96,8 @@ const BottomNavbar = ({ history }) => {
       )
       .then((res) => {
         localStorage.setItem("token", res.data.token);
-        localStorage.setItem("user", "test2@mail.com");
-        dispatch({ type: "LOGIN", user: "test2@mail.com" });
+        localStorage.setItem("user", "test@mail.com");
+        dispatch({ type: "LOGIN", user: "test@mail.com" });
       })
       .catch((err) => {
         console.error(err);

@@ -132,7 +132,7 @@ const CommentItem = withRouter(({ comment, history, currentUser }) => {
   const commentRemoveHandler = () => {
     if (window.confirm("정말로 삭제하시겠습니까?")) {
       axios
-        .delete("http://localhost:4000/comment/", {
+        .delete("http://54.180.83.133:3000/comment/", {
           data: {
             token: localStorage.getItem("token"),
             commentId: comment.id,
@@ -156,7 +156,7 @@ const CommentItem = withRouter(({ comment, history, currentUser }) => {
   };
   const onCommentUpdate = () => {
     axios
-      .patch("http://localhost:4000/comment/", {
+      .patch("http://54.180.83.133:3000/comment/", {
         comment: commentToEdit,
         commentId: comment.id,
         token: localStorage.getItem("token"),
@@ -227,7 +227,7 @@ const PostView = ({ match, history }) => {
 
   useEffect(() => {
     axios
-      .post(`http://localhost:4000/post/${idFromParams}`, {
+      .post(`http://54.180.83.133:3000/post/${idFromParams}`, {
         token: localStorage.getItem("token"),
       })
       .then((res) => {
@@ -251,7 +251,7 @@ const PostView = ({ match, history }) => {
 
   const commentHadler = () => {
     axios
-      .post("http://localhost:4000/comment", {
+      .post("http://54.180.83.133:3000/comment", {
         comment: comment,
         contentId: idFromParams,
         token: localStorage.getItem("token"),
@@ -266,7 +266,7 @@ const PostView = ({ match, history }) => {
   const postRemoveHandler = () => {
     if (window.confirm("정말로 삭제하시겠습니까?")) {
       axios
-        .delete(`http://localhost:4000/post/${idFromParams}`, {
+        .delete(`http://54.180.83.133:3000/post/${idFromParams}`, {
           data: { token: localStorage.getItem("token") },
         })
         .then((res) => {
