@@ -187,6 +187,7 @@ const Profile = withRouter(({ match }) => {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [img, setImg] = useState(null);
   const [imgPreview, setImgPreview] = useState(null);
+  const [basicProfile, setBasicProfile] = useState(false);
   const nameToEdit = useSelector((state) => state.auth.nameToEdit);
   const introduceToEdit = useSelector((state) => state.auth.introduceToEdit);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -233,8 +234,9 @@ const Profile = withRouter(({ match }) => {
     dispatch({ type: "INTRODUCE_CHANGE", introduce: introduce });
     dispatch({ type: "PROFILE_EDIT_MODE_CHANGE", mode: false });
     setImgPreview(null);
+    setBasicProfile(false);
   };
-
+  // 수정사항 적용시 실행 함수
   const onEdited = (e) => {
     e.preventDefault();
     const Data = new FormData();
@@ -242,6 +244,7 @@ const Profile = withRouter(({ match }) => {
     Data.append("introduce", introduceToEdit);
     Data.append("img", img);
     Data.append("token", localStorage.getItem("token"));
+    Data.append("basicProfile", basicProfile);
     if (passwordToChange.length >= 1) {
       if (passwordToChange === passwordConfirm) {
         if (localStorage.getItem("user") === "test@mail.com") {
@@ -280,18 +283,25 @@ const Profile = withRouter(({ match }) => {
         .catch((err) => console.log(err));
     }
   };
+  // 이미지 클릭시 실행 함수
   const onImgSelect = (e) => {
     e.preventDefault();
+    // img 상태에 파일을 담는다
     setImg(e.target.files[0]);
     const reader = new FileReader();
     const file = e.target.files[0];
     reader.onloadend = (e) => {
+      // 파일이 선택되면 미리보기 화면에 보여주기 위해 파일의 url값을 imgPreview로 할당한다
       setImgPreview(e.target.result);
+      setBasicProfile(false);
     };
     if (file) {
       reader.readAsDataURL(file);
     } else {
+      // 선택된 파일이 없으면(선택했다가 취소되면) imgPreview를 null로 할당한다
       setImgPreview(null);
+      setImg(null);
+      setBasicProfile(false);
     }
   };
   const onNameChange = (e) => {
@@ -313,9 +323,11 @@ const Profile = withRouter(({ match }) => {
     setPasswordConfirm(e.target.value);
   };
   const onBasicImgClick = () => {
+    setImg(null);
     setImgPreview(
       "https://user-images.githubusercontent.com/62422486/98907760-b282a200-2502-11eb-9e27-acb392842a92.png"
     );
+    setBasicProfile(true);
   };
   return (
     <>
