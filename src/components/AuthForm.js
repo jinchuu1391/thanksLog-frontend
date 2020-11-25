@@ -53,7 +53,6 @@ const AuthFormWrapper = styled.div`
   .filebox label:hover {
     background-color: grey;
   }
-
   .filebox input[type="file"] {
     position: absolute;
     width: 1px;
@@ -98,14 +97,29 @@ const AuthForm = ({ type, history }) => {
   const [form, setForm] = useState({
     email: "",
     username: "",
-    password: "",
-    passwordConfirm: "",
     introduce: "",
   });
   const [img, setImg] = useState(null);
   const [imgPreview, setImgPreview] = useState(null);
 
-  const { email, username, introduce, password, passwordConfirm } = form;
+  const { email, username, introduce } = form;
+
+  const [passwordForm, setPasswordForm] = useState({
+    password: "",
+    passwordConfirm: "",
+  });
+  const { password, passwordConfirm } = passwordForm;
+
+  const convertToEnglish = (value) => {
+    return value.replace(/[^\\!-z]/gi, "");
+  };
+  const onPasswordChange = (e) => {
+    const nextPasswordForm = {
+      ...passwordForm,
+      [e.target.name]: convertToEnglish(e.target.value),
+    };
+    setPasswordForm(nextPasswordForm);
+  };
 
   const onChange = (e) => {
     const nextForm = {
@@ -147,6 +161,9 @@ const AuthForm = ({ type, history }) => {
       if (password !== passwordConfirm) {
         return alert("비밀번호를 다시 확인해주세요");
       }
+      if (username === "") {
+        return alert("이름을 입력해주세요");
+      }
       const Data = new FormData();
       Data.append("email", email);
       Data.append("username", username);
@@ -154,7 +171,7 @@ const AuthForm = ({ type, history }) => {
       Data.append("introduce", introduce);
       Data.append("img", img);
       axios
-        .post("http://localhost:4000/auth/signup", Data, {
+        .post("http://54.180.83.133:3000/auth/signup", Data, {
           headers: {
             "Content-Type": "application/json;charset=UTF-8",
             "Access-Control-Allow-Origin": "*",
@@ -176,7 +193,7 @@ const AuthForm = ({ type, history }) => {
     } else if (type === "login") {
       axios
         .post(
-          "http://localhost:4000/auth/signin",
+          "http://54.180.83.133:3000/auth/signin",
           {
             email: email,
             password: password,
@@ -216,12 +233,6 @@ const AuthForm = ({ type, history }) => {
       <h3>{mode}</h3>
       <form encType="multipart/form-data">
         <div className="formLeft">
-          <StyledInput
-            name="email"
-            placeholder="이메일"
-            onChange={onChange}
-            onKeyPress={enterKeyHandler}
-          ></StyledInput>
           {type === "register" && (
             <StyledInput
               name="username"
@@ -231,26 +242,35 @@ const AuthForm = ({ type, history }) => {
             ></StyledInput>
           )}
           <StyledInput
-            name="password"
-            type="password"
-            placeholder="비밀번호"
+            name="email"
+            placeholder="이메일"
             onChange={onChange}
             onKeyPress={enterKeyHandler}
+          ></StyledInput>
+          <StyledInput
+            name="password"
+            type="password"
+            placeholder="비밀번호(한글 입력 불가)"
+            value={password}
+            onChange={onPasswordChange}
+            onKeyPress={enterKeyHandler}
+            autocomplete="new-password"
           ></StyledInput>
           {type === "register" && (
             <>
               <StyledInput
                 name="passwordConfirm"
-                placeholder="비밀번호 확인"
+                placeholder="비밀번호 확인(한글 입력 불가)"
                 type="password"
-                onChange={onChange}
+                value={passwordConfirm}
+                onChange={onPasswordChange}
                 onKeyPress={enterKeyHandler}
+                autocomplete="new-password"
               ></StyledInput>
               <StyledInput
                 name="introduce"
                 onChange={onChange}
                 placeholder="자신을 소개해주세요(선택)"
-                onKeyPress={enterKeyHandler}
               ></StyledInput>
             </>
           )}
