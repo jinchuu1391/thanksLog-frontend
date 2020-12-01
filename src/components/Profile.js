@@ -167,20 +167,11 @@ const PostItem = withRouter(({ post, history }) => {
 });
 
 const Profile = withRouter(({ match }) => {
-  const [profileData, setProfileData] = useState({
-    username: "",
-    email: "",
-    profile_photo_url: "",
-    introduce: "",
-    Contents: [],
-  });
-  const {
-    username,
-    email,
-    profile_photo_url,
-    introduce,
-    Contents,
-  } = profileData;
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [profile_photo_url, setProfile_photo_url] = useState("");
+  const [introduce, setIntroduce] = useState("");
+  const [Contents, setContents] = useState("");
   const [currentUser, setCurrentUser] = useState("");
 
   const [passwordToChange, setPasswordToChange] = useState("");
@@ -205,7 +196,11 @@ const Profile = withRouter(({ match }) => {
       })
       .then((res) => {
         setCurrentUser(res.data.currentUser);
-        setProfileData(res.data.userInfo);
+        setUsername(res.data.userInfo.username);
+        setEmail(res.data.userInfo.email);
+        setProfile_photo_url(res.data.userInfo.profile_photo_url);
+        setIntroduce(res.data.userInfo.introduce);
+        setContents(res.data.userInfo.Contents);
         dispatch({
           type: "PROFILE_LOADED",
           name: res.data.userInfo.username,
