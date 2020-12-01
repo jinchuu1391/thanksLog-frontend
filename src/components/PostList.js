@@ -7,6 +7,7 @@ import { withRouter } from "react-router-dom";
 
 const PostListWrapper = styled(Responsive)`
   margin-top: 3rem;
+  margin-bottom: 10rem;
 `;
 
 const PostItemWrapper = styled.div`
