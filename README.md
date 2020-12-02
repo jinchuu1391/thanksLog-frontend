@@ -5,6 +5,7 @@
 src="https://user-images.githubusercontent.com/62422486/100712599-5a023e80-33f6-11eb-9a18-81e230bd5671.png">
 
 배포 : https://bit.ly/2Jt3vzB
+백엔드 레포 : https://github.com/jinchuu1391/thanksLog-backend
 
 # About Service
 - 회원가입을 통해 이용이 가능하지만, 빠르게 둘러보기를 원한다면 메인 페이지에서 곧바로 테스트 계정으로 로그인이 가능합니다.
