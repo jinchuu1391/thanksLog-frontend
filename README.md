@@ -13,6 +13,7 @@ src="https://user-images.githubusercontent.com/62422486/100712599-5a023e80-33f6-
 - 글쓰기 : Quill Editor를 이용하여 게시글을 작성할 수 있습니다.
 - 로그인 상태라면 댓글을 등록할 수 있습니다.
 - 프로필페이지 : 프로필 사진, 이메일 주소, 한 줄 소개 등 내 정보와 내가 쓴 글 목록을 확인할 수 있습니다.
+
 회원가입
 <img width="500" src="https://user-images.githubusercontent.com/62422486/100839011-dd836480-34b6-11eb-9214-85189a8618c7.png">
 글쓰기
