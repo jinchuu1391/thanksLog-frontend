@@ -17,7 +17,7 @@ src="https://user-images.githubusercontent.com/62422486/100712599-5a023e80-33f6-
 <img width="500" src="https://user-images.githubusercontent.com/62422486/100839011-dd836480-34b6-11eb-9214-85189a8618c7.png">
 <img width="500" src="https://user-images.githubusercontent.com/62422486/100838735-533b0080-34b6-11eb-954f-de7d31e5e183.png">
 <img width="500" src="https://user-images.githubusercontent.com/62422486/100838858-909f8e00-34b6-11eb-86d4-7701f58a7a04.png">
-<img width="500" src="https://user-images.githubusercontent.com/62422486/100838933-b75dc480-34b6-11eb-9892-d4f7b8827eab.png">
+<img width="500" src="https://user-images.githubusercontent.com/62422486/100839486-a3ff2900-34b7-11eb-93cf-23e47f723968.png">
 
 # Stack
 front-end
