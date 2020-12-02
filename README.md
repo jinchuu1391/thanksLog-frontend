@@ -5,7 +5,6 @@
 src="https://user-images.githubusercontent.com/62422486/100712599-5a023e80-33f6-11eb-9a18-81e230bd5671.png">
 
 배포 링크 : https://bit.ly/2Jt3vzB
-
 백엔드 레포 : https://github.com/jinchuu1391/thanksLog-backend
 
 # About Service
